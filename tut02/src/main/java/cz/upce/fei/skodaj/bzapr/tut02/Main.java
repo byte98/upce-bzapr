@@ -60,5 +60,17 @@ public class Main {
         {
             System.out.println("You haven't entered number greater than 5.");
         }
+        
+        switch (userInput)
+        {
+            case 1:
+                System.out.println("You've entered number one.");
+                break;
+            case 2:
+                System.out.println("You've entered number two.");
+                break;
+            default:
+                System.out.println("You have entered neither one nor two.");
+        }
     }
 }
