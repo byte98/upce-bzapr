@@ -43,8 +43,22 @@ public class Main {
         System.out.println("You've entered: " + userInput);
         */
         // Input will be string
+        /*
         System.out.println("Enter input: ");
         String userInput = scanner.next();
         System.out.println("You've entered: " + userInput);
+        */
+        
+        // Input will be number
+        System.out.println("Enter number:");
+        int userInput = scanner.nextInt();
+        if (userInput > 5)
+        {
+            System.out.println("You've entered number greater than 5.");
+        }
+        else
+        {
+            System.out.println("You haven't entered number greater than 5.");
+        }
     }
 }
