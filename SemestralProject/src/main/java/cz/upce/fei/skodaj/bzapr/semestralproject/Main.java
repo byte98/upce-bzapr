@@ -17,6 +17,10 @@
  */
 package cz.upce.fei.skodaj.bzapr.semestralproject;
 
+import cz.upce.fei.skodaj.bzapr.semestralproject.ui.MainWindow;
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
+
 
 /**
  * Entry point of whole program
@@ -30,6 +34,16 @@ public class Main {
      * @param args Arguments of program
      */
     public static void main(String[] args) {
-        
+        // Run GUI in separate thread
+        SwingUtilities.invokeLater(new Runnable(){
+            @Override
+            public void run()
+            {
+                MainWindow window = new MainWindow();
+                window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                window.pack();
+                window.setVisible(true);
+            }
+        });
     }
 }
