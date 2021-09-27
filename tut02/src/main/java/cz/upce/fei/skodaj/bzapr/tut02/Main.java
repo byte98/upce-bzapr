@@ -30,10 +30,12 @@ public class Main {
      * @param args Arguments of program
      */
     public static void main(String[] args) {
+        /*
         String firstString = "fs";
         int lengthOfString = firstString.length();
         System.out.println("First string: " + firstString);
-        System.out.println("Length of first string: " + lengthOfString);
+        System.out.println("Length of first string: " + lengthOfString);        
+        */
         Scanner scanner = new Scanner(System.in);
         
         /*
@@ -50,6 +52,7 @@ public class Main {
         */
         
         // Input will be number
+        /*
         System.out.println("Enter number:");
         int userInput = scanner.nextInt();
         if (userInput > 5)
@@ -72,5 +75,38 @@ public class Main {
             default:
                 System.out.println("You have entered neither one nor two.");
         }
-    }
+        */
+        
+        // Simple calculator
+        double operand1, operand2;
+        System.out.println("Enter first operand:");
+        operand1 = scanner.nextDouble();
+        System.out.println("Enter second operand:");
+        operand2 = scanner.nextDouble();
+        String operation;
+        System.out.println("Enter operation [+, -, *, /]:");
+        operation = scanner.next();
+        while (!"+".equals(operation) && !"-".equals(operation) && !"*".equals(operation) && !"/".equals(operation))
+        {
+            System.out.println("Enter operation [+, -, *, /]:");
+            operation = scanner.next();
+        }
+        double result = 0;
+        switch (operation)
+        {
+            case "+": result = operand1 + operand2; break;
+            case "-": result = operand1 - operand2; break;
+            case "*": result = operand1 * operand2; break;
+            case "/": result = operand1 / operand2; break;
+        }
+        System.out.println("Result is: " + result);
+        
+        double sum = operand1 + operand2;
+        System.out.println("Second power: " +  Math.pow(sum, 2));
+        if (sum >= 0)
+        {
+            System.out.println("Square root: " + Math.sqrt(sum));
+        }
+        
+    } 
 }
