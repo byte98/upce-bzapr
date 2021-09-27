@@ -78,6 +78,7 @@ public class Main {
         */
         
         // Simple calculator
+        /*
         double operand1, operand2;
         System.out.println("Enter first operand:");
         operand1 = scanner.nextDouble();
@@ -107,6 +108,26 @@ public class Main {
         {
             System.out.println("Square root: " + Math.sqrt(sum));
         }
+        */
+        
+        // Right triangle calculator
+        double firstSide, secondSide;
+        do
+        {
+            System.out.println("Enter first side:");
+            firstSide = scanner.nextDouble();
+        }
+        while (firstSide < 0);
+        do
+        {
+            System.out.println("Enter second side:");
+            secondSide = scanner.nextDouble();  
+        }
+        while (secondSide < 0);
+        double thirdSide = Math.sqrt(Math.pow(firstSide, 2) + Math.pow(secondSide, 2));
+        System.out.println("Third side is: " + thirdSide);
+        
+        
         
     } 
 }
