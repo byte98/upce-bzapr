@@ -17,13 +17,6 @@
  */
 package cz.upce.fei.skodaj.bzapr.semestralproject;
 
-import cz.upce.fei.skodaj.bzapr.semestralproject.ui.gui.MainWindow;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 
 /**
  * Entry point of whole program
@@ -31,37 +24,12 @@ import javax.swing.UnsupportedLookAndFeelException;
  */
 public class Main {
     
-    /**
-     * Logger of the class
-     */
-    static Logger logger;
     
     /**
      * Main function of program
      * @param args Arguments of program
      */
     public static void main(String[] args) {
-        Main.logger = Logger.getLogger("NetInspector");
-        // Set windows look and feel
-        try
-        {
-            UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-        }
-        catch (ClassNotFoundException | IllegalAccessException | InstantiationException | UnsupportedLookAndFeelException ex)
-        {
-            Main.logger.log(Level.WARNING, ex.getLocalizedMessage());
-        }
         
-        // Just run GUI in separate thread
-        SwingUtilities.invokeLater(new Runnable() {
-             @Override
-             public void run() {
-                    MainWindow window;
-                    window = new MainWindow("Net Inspector");
-                    window.pack();
-                    window.setVisible(true);
-                  
-             }
-        });
     }
 }
