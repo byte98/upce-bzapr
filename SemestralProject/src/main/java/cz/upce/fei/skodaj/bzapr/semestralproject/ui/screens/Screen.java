@@ -15,22 +15,22 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package cz.upce.fei.skodaj.bzapr.semestralproject;
-
+package cz.upce.fei.skodaj.bzapr.semestralproject.ui.screens;
 
 /**
- * Entry point of whole program
+ * Interface describing what to show on screen
  * @author Jiri Skoda <jiri.skoda@student.upce.cz>
  */
-public class Main {
-    
+public interface Screen {
+    /**
+     * Gets content of screen
+     * @return Content of screen
+     */
+    public String GetContent();    
     
     /**
-     * Main function of program
-     * @param args Arguments of program
+     * Gets name of screen
+     * @return Name of screen
      */
-    public static void main(String[] args) {
-        Controller controller = Controller.GetController();
-        controller.Start();
-    }
+    public String GetName();
 }

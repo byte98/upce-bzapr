@@ -15,22 +15,21 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package cz.upce.fei.skodaj.bzapr.semestralproject;
-
+package cz.upce.fei.skodaj.bzapr.semestralproject.ui.screens;
 
 /**
- * Entry point of whole program
+ * Class creating new screens
  * @author Jiri Skoda <jiri.skoda@student.upce.cz>
  */
-public class Main {
-    
-    
+public class ScreenFactory {
     /**
-     * Main function of program
-     * @param args Arguments of program
+     * Creates new HTML screen
+     * @param name Name of screen
+     * @param fileName File containing content of the screen
+     * @return Screen with selected name and content
      */
-    public static void main(String[] args) {
-        Controller controller = Controller.GetController();
-        controller.Start();
+    public static HTMLScreen CreateHTMLScreen(String name, String fileName)
+    {
+        return new HTMLScreen(name, fileName);
     }
 }

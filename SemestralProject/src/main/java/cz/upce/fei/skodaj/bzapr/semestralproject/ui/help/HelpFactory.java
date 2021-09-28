@@ -15,22 +15,25 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package cz.upce.fei.skodaj.bzapr.semestralproject;
+package cz.upce.fei.skodaj.bzapr.semestralproject.ui.help;
 
+import java.awt.Color;
 
 /**
- * Entry point of whole program
+ * Class which can create simple helps
  * @author Jiri Skoda <jiri.skoda@student.upce.cz>
  */
-public class Main {
-    
+public class HelpFactory {
     
     /**
-     * Main function of program
-     * @param args Arguments of program
+     * Creates new help to the command
+     * @param command Command to which help belongs to
+     * @param color Color of the command
+     * @param help Text of help to the command
+     * @return New simple help to the command
      */
-    public static void main(String[] args) {
-        Controller controller = Controller.GetController();
-        controller.Start();
+    public static SimpleHelp CreateSimpleHelp(String command, Color color, String help)
+    {
+        return new SimpleHelp(command, help, color);
     }
 }

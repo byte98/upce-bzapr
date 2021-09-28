@@ -15,22 +15,31 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package cz.upce.fei.skodaj.bzapr.semestralproject;
+package cz.upce.fei.skodaj.bzapr.semestralproject.ui.help;
 
+import java.awt.Color;
 
 /**
- * Entry point of whole program
+ * Interface describing behaviour of help to the commands
  * @author Jiri Skoda <jiri.skoda@student.upce.cz>
  */
-public class Main {
-    
+public interface Help {
     
     /**
-     * Main function of program
-     * @param args Arguments of program
+     * Gets command to which help belongs to
+     * @return Command to which help belongs to
      */
-    public static void main(String[] args) {
-        Controller controller = Controller.GetController();
-        controller.Start();
-    }
+    public String GetCommand();
+    
+    /**
+     * Gets text of help to the command
+     * @return Text of help to the command
+     */
+    public String GetHelp();
+    
+    /**
+     * Gets colour of command
+     * @return colour of command
+     */
+    public Color GetColor();
 }
