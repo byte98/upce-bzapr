@@ -68,6 +68,7 @@ public class HTMLScreen implements Screen {
                 {
                     this.content += reader.nextLine();
                 }
+                reader.close();
             }
             catch (FileNotFoundException ex)
             {

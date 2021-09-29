@@ -18,10 +18,16 @@
 package cz.upce.fei.skodaj.bzapr.semestralproject.data;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Class containing all stations
@@ -51,6 +57,70 @@ public class Stations {
     {
         this.stations = new ArrayList<>();
         this.stationsFile = new File("resources/stations.csv");
+        this.LoadStations();
+    }
+    
+    /**
+     * Loads stations from file
+     */
+    private void LoadStations()
+    {
+        if (this.stationsFile.exists())
+        {
+            Scanner sc;
+            try
+            {
+                boolean first = true;
+                sc = new Scanner(this.stationsFile);
+                while (sc.hasNext())
+                {
+                    if (first == false)
+                    {
+                        String line = sc.nextLine();
+                        String[] bits = line.split(",");
+                        Station s = new Station(bits[1], bits[2]);
+                        s.SetIdentifier(Integer.parseInt(bits[0]));
+                        this.stations.add(s);
+                    }
+                    else
+                    {
+                        first = false;
+                    }
+                }
+                sc.close();
+            }
+            catch (FileNotFoundException ex)
+            {
+                Logger.getLogger(Stations.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            
+        }
+    }
+    
+    /**
+     * Saves stations to files
+     */
+    private void SaveStations()
+    {
+        try {
+            FileWriter fw = new FileWriter(this.stationsFile);
+            fw.write("id,abbr,name\n");
+            Iterator<Station> it = this.stations.iterator();
+            while (it.hasNext())
+            {
+                Station s = it.next();
+                if (s != null)
+                {
+                    String output = s.GetIdentifier() + "," + s.GetAbbrevation() + "," + s.GetName() + "\n";
+                    fw.append(output);
+                }
+            }
+            fw.close();
+        } catch (IOException ex) {
+            Logger.getLogger(Stations.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
     }
     
     /**
@@ -172,6 +242,9 @@ public class Stations {
                     newId = ThreadLocalRandom.current().nextInt(0,Integer.MAX_VALUE - 1);
                 }
                 while (this.CheckFreeIdentifier(newId) == false);
+                st.SetIdentifier(newId);
+                this.stations.add(st);
+                this.SaveStations();
             }
             else
             {
