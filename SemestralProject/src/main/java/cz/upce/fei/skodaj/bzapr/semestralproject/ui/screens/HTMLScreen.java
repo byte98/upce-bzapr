@@ -32,17 +32,17 @@ public class HTMLScreen implements Screen {
     /**
      * File containing content of screen
      */
-    private final String fileName;
+    protected final String fileName;
     
     /**
      * Name of screen
      */
-    private final String name;
+    protected final String name;
     
     /**
      * Content of the screen
      */
-    private String content = null;
+    protected String content = null;
     
     /**
      * Creates new instance of screen which content is saved in HTML file

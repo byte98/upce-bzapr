@@ -20,6 +20,7 @@ package cz.upce.fei.skodaj.bzapr.semestralproject;
 import cz.upce.fei.skodaj.bzapr.semestralproject.ui.MainWindow;
 import cz.upce.fei.skodaj.bzapr.semestralproject.ui.help.Help;
 import cz.upce.fei.skodaj.bzapr.semestralproject.ui.help.HelpFactory;
+import cz.upce.fei.skodaj.bzapr.semestralproject.ui.screens.HTMLTemplateScreen;
 import cz.upce.fei.skodaj.bzapr.semestralproject.ui.screens.Screen;
 import cz.upce.fei.skodaj.bzapr.semestralproject.ui.screens.ScreenFactory;
 import java.awt.Color;
@@ -97,7 +98,7 @@ public class Controller {
         // Welcome help
         Help[] wH = {
           HelpFactory.CreateSimpleHelp("sale", Color.CYAN, "Rezim prodeje"),
-          HelpFactory.CreateSimpleHelp("tariff", Color.CYAN, "Rezim upravy tarifu"),
+          HelpFactory.CreateSimpleHelp("tariffs", Color.CYAN, "Rezim upravy tarifu"),
           HelpFactory.CreateSimpleHelp("exit", Color.MAGENTA, "Ukoncit program")
         };
         this.helps.put("welcome", wH);
@@ -110,6 +111,15 @@ public class Controller {
         };
         this.helps.put("exit", ex);
         
+        // Tariffs help
+        Help[] tH = {
+          HelpFactory.CreateSimpleHelp("stations", Color.YELLOW, "Rezim upravy stanic"),
+          HelpFactory.CreateSimpleHelp("distances", Color.BLUE, "Rezim upravy vzdalenosti"),
+          HelpFactory.CreateSimpleHelp("edit", Color.GREEN, "Rezim upravy tarifu"),
+          HelpFactory.CreateSimpleHelp("back", Color.MAGENTA, "Zpet")
+        };
+        this.helps.put("tariffs", tH);
+        
     }
     
     /**
@@ -120,7 +130,8 @@ public class Controller {
         Screen screens[] = {
           ScreenFactory.CreateHTMLScreen("welcome", "welcome.html"),
           ScreenFactory.CreateHTMLScreen("welcome-no-tariff", "welcome-no-tariff.html"),
-          ScreenFactory.CreateHTMLScreen("exit", "exit.html")
+          ScreenFactory.CreateHTMLScreen("exit", "exit.html"),
+          new HTMLTemplateScreen("tariffs", "tariffs.html")
         };
         
         for (Screen screen : screens) {
@@ -194,6 +205,7 @@ public class Controller {
         switch (command.toLowerCase())
         {
             case "exit":
+                this.mainWindow.SetStrict(true);
                 this.mainWindow.ShowScreen(this.GetScreen("exit"));
                 this.mainWindow.ShowHelp(this.helps.get("exit"));
                 this.previousState = this.state;
@@ -211,6 +223,7 @@ public class Controller {
             case "no":
                 if ("exit".equals(this.state))
                 {
+                    this.mainWindow.SetStrict(true);
                     this.state = this.previousState;
                     this.previousState = "exit";
                     this.mainWindow.ShowScreen(this.GetScreen(this.state));
@@ -219,6 +232,28 @@ public class Controller {
                     this.previousCommandPrefix = "/exit?";
                     this.mainWindow.SetCommandMode(this.commandPrefix);
                 }
+                break;
+            case "tariffs":
+                this.mainWindow.SetStrict(true);
+                this.mainWindow.ShowScreen(this.GetScreen("tariffs"));
+                this.mainWindow.ShowHelp(this.helps.get("tariffs"));
+                this.previousState = this.state;
+                this.state = "tariffs";
+                this.previousCommandPrefix = this.commandPrefix;
+                this.commandPrefix = "/tariffs";
+                this.mainWindow.SetCommandMode(this.commandPrefix);
+                break;
+            case "back":
+                this.mainWindow.SetStrict(true);
+                this.mainWindow.ShowScreen(this.GetScreen(this.previousState));
+                this.mainWindow.ShowHelp(this.helps.get(this.previousState));
+                String tmp = this.state;
+                this.state = this.previousState;
+                this.previousState = tmp;
+                tmp = this.commandPrefix;
+                this.commandPrefix = this.previousCommandPrefix;
+                this.previousCommandPrefix = tmp;
+                this.mainWindow.SetCommandMode(this.commandPrefix);
         }
     }
 }
