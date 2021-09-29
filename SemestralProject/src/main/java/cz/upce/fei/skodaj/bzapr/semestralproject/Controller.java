@@ -23,6 +23,7 @@ import cz.upce.fei.skodaj.bzapr.semestralproject.ui.help.HelpFactory;
 import cz.upce.fei.skodaj.bzapr.semestralproject.ui.screens.Screen;
 import cz.upce.fei.skodaj.bzapr.semestralproject.ui.screens.ScreenFactory;
 import java.awt.Color;
+import java.awt.event.WindowEvent;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JFrame;
@@ -52,6 +53,16 @@ public class Controller {
      * Main window of the program
      */
     private MainWindow mainWindow;
+    
+    /**
+     * Actual state of program
+     */
+    private String state;
+    
+    /**
+     * Previous state of program
+     */
+    private String previousState;
     
     /**
      * Creates new instance of controller
@@ -140,6 +151,8 @@ public class Controller {
                 mainWindow.ShowHelp(helps.get("welcome"));
                 mainWindow.SetController(Controller.instance);
                 mainWindow.SetStrict(true);
+                state = "welcome";
+                previousState = null;
             }
         });
     }
@@ -165,10 +178,28 @@ public class Controller {
      */
     public void HandleCommand(String command)
     {
-        if ("exit".equals(command.toLowerCase()))
+        switch (command.toLowerCase())
         {
-            this.mainWindow.ShowScreen(this.GetScreen("exit"));
-            this.mainWindow.ShowHelp(this.helps.get("exit"));
+            case "exit":
+                this.mainWindow.ShowScreen(this.GetScreen("exit"));
+                this.mainWindow.ShowHelp(this.helps.get("exit"));
+                this.previousState = this.state;
+                this.state = "exit";
+                break;
+            case "yes":
+                if ("exit".equals(this.state)) // Exit confirmation
+                {
+                    this.mainWindow.dispatchEvent(new WindowEvent(this.mainWindow, WindowEvent.WINDOW_CLOSING));
+                }
+                break;
+            case "no":
+                if ("exit".equals(this.state))
+                {
+                    this.state = this.previousState;
+                    this.previousState = "exit";
+                    this.mainWindow.ShowScreen(this.GetScreen(this.state));
+                    this.mainWindow.ShowHelp(this.helps.get(this.state));
+                }
         }
     }
 }
