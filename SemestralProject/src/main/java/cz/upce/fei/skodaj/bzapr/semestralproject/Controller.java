@@ -65,6 +65,16 @@ public class Controller {
     private String previousState;
     
     /**
+     * Actual command prefix
+     */
+    private String commandPrefix;
+    
+    /**
+     * Previously used command prefix
+     */
+    private String previousCommandPrefix;
+    
+    /**
      * Creates new instance of controller
      */
     private Controller()
@@ -74,6 +84,9 @@ public class Controller {
         
         this.helps = new HashMap<>();
         this.AddHelps();
+        
+        this.commandPrefix = "";
+        this.previousCommandPrefix = "";
     }
     
     /**
@@ -185,6 +198,9 @@ public class Controller {
                 this.mainWindow.ShowHelp(this.helps.get("exit"));
                 this.previousState = this.state;
                 this.state = "exit";
+                this.previousCommandPrefix = this.commandPrefix;
+                this.commandPrefix = "/exit?";
+                this.mainWindow.SetCommandMode(this.commandPrefix);
                 break;
             case "yes":
                 if ("exit".equals(this.state)) // Exit confirmation
@@ -198,7 +214,10 @@ public class Controller {
                     this.state = this.previousState;
                     this.previousState = "exit";
                     this.mainWindow.ShowScreen(this.GetScreen(this.state));
-                    this.mainWindow.ShowHelp(this.helps.get(this.state));
+                    this.mainWindow.ShowHelp(this.helps.get(this.state));                    
+                    this.commandPrefix = this.previousCommandPrefix;
+                    this.previousCommandPrefix = "/exit?";
+                    this.mainWindow.SetCommandMode(this.commandPrefix);
                 }
         }
     }

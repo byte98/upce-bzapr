@@ -446,4 +446,14 @@ public class MainWindow extends JFrame
             Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    /**
+     * Sets command prefix to command line
+     * @param commandPrefix Prefix which will be displayed in command line
+     */
+    public void SetCommandMode(String commandPrefix)
+    {
+        this.commandMode = commandPrefix;
+        this.commandPrefix.setText(this.commandMode + "> ");
+    }
 }
