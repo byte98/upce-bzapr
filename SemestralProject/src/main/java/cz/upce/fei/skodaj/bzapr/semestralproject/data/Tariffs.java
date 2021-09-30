@@ -30,7 +30,7 @@ public class Tariffs {
     /**
      * Instance of tariffs
      */
-    private Tariffs instance = null;
+    private static Tariffs instance = null;
     
     /**
      * File containing all files
@@ -55,13 +55,13 @@ public class Tariffs {
      * Gets instance of tariffs manager
      * @return Instance of tariffs manager
      */
-    public Tariffs GetInstance()
+    public static Tariffs GetInstance()
     {
-        if (this.instance == null)
+        if (Tariffs.instance == null)
         {
-            this.instance = new Tariffs();
+            Tariffs.instance = new Tariffs();
         }
-        return this.instance;
+        return Tariffs.instance;
     }
     
     

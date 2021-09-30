@@ -17,6 +17,9 @@
  */
 package cz.upce.fei.skodaj.bzapr.semestralproject;
 
+import cz.upce.fei.skodaj.bzapr.semestralproject.data.Station;
+import cz.upce.fei.skodaj.bzapr.semestralproject.data.Stations;
+import cz.upce.fei.skodaj.bzapr.semestralproject.data.Tariffs;
 import cz.upce.fei.skodaj.bzapr.semestralproject.ui.MainWindow;
 import cz.upce.fei.skodaj.bzapr.semestralproject.ui.help.Help;
 import cz.upce.fei.skodaj.bzapr.semestralproject.ui.help.HelpFactory;
@@ -76,6 +79,16 @@ public class Controller {
     private String previousCommandPrefix;
     
     /**
+     * Manager of stations in system
+     */
+    private Stations stationManager;
+    
+    /**
+     * Manager of tariffs in the system
+     */
+    private Tariffs tariffManager;
+    
+    /**
      * Creates new instance of controller
      */
     private Controller()
@@ -88,6 +101,9 @@ public class Controller {
         
         this.commandPrefix = "";
         this.previousCommandPrefix = "";
+        
+        this.stationManager = Stations.GetInstance();
+        this.tariffManager = Tariffs.GetInstance();
     }
     
     /**
@@ -120,6 +136,13 @@ public class Controller {
         };
         this.helps.put("tariffs", tH);
         
+        // Stations help
+        Help[] sH = {
+          HelpFactory.CreateSimpleHelp("<zkratka nebo nazev>", Color.YELLOW, "Rezim upravy stanice"),
+          HelpFactory.CreateSimpleHelp("add", Color.CYAN, "Rezim pridani stanice"),
+          HelpFactory.CreateSimpleHelp("back", Color.MAGENTA, "Zpet")
+        };
+        this.helps.put("stations", sH);
     }
     
     /**
@@ -131,7 +154,9 @@ public class Controller {
           ScreenFactory.CreateHTMLScreen("welcome", "welcome.html"),
           ScreenFactory.CreateHTMLScreen("welcome-no-tariff", "welcome-no-tariff.html"),
           ScreenFactory.CreateHTMLScreen("exit", "exit.html"),
-          new HTMLTemplateScreen("tariffs", "tariffs.html")
+          new HTMLTemplateScreen("tariffs", "tariffs.html"),
+          new HTMLTemplateScreen("stations", "stations.html")
+
         };
         
         for (Screen screen : screens) {
@@ -235,7 +260,17 @@ public class Controller {
                 break;
             case "tariffs":
                 this.mainWindow.SetStrict(true);
-                this.mainWindow.ShowScreen(this.GetScreen("tariffs"));
+                Map<String,String> stationData = new HashMap<>();
+                Station[] stations = this.stationManager.GetAllStations();
+                String stationsList = "";
+                int idx = 0;
+                for (Station s: stations)
+                {
+                    stationsList += s.GetName();
+                    if (idx < stationData.size() - 1) stationsList += ",";
+                }                
+                stationData.put("station_list", this.TrimString(stationsList, 90));
+                this.mainWindow.ShowScreen(this.SetScreensContent("tariffs", stationData));
                 this.mainWindow.ShowHelp(this.helps.get("tariffs"));
                 this.previousState = this.state;
                 this.state = "tariffs";
@@ -243,17 +278,84 @@ public class Controller {
                 this.commandPrefix = "/tariffs";
                 this.mainWindow.SetCommandMode(this.commandPrefix);
                 break;
-            case "back":
+            case "back":                
                 this.mainWindow.SetStrict(true);
-                this.mainWindow.ShowScreen(this.GetScreen(this.previousState));
-                this.mainWindow.ShowHelp(this.helps.get(this.previousState));
-                String tmp = this.state;
-                this.state = this.previousState;
-                this.previousState = tmp;
-                tmp = this.commandPrefix;
-                this.commandPrefix = this.previousCommandPrefix;
-                this.previousCommandPrefix = tmp;
+                if (this.previousState == "stations")
+                {
+                    this.mainWindow.ShowHelp(this.helps.get("welcome"));
+                    this.mainWindow.ShowScreen(this.GetScreen("welcome"));
+                    this.previousState = this.state;
+                    this.state = "welcome";
+                    this.previousCommandPrefix = this.commandPrefix;
+                    this.commandPrefix = "";
+                    this.mainWindow.SetCommandMode(this.commandPrefix);
+                }
+                else
+                {
+                    this.mainWindow.ShowScreen(this.GetScreen(this.previousState));
+                    this.mainWindow.ShowHelp(this.helps.get(this.previousState));
+                    String tmp = this.state;
+                    this.state = this.previousState;
+                    this.previousState = tmp;
+                    tmp = this.commandPrefix;
+                    this.commandPrefix = this.previousCommandPrefix;
+                    this.previousCommandPrefix = tmp;
+                    this.mainWindow.SetCommandMode(this.commandPrefix);
+                }                
+                break;
+            case "stations":
+                this.mainWindow.SetStrict(false);
+                String stationsTr = " ";
+                for (Station s: this.stationManager.GetAllStations())
+                {
+                    stationsTr += "<tr><td>" + s.GetAbbrevation() + "</td><td>" + s.GetName() + "</td></tr>";
+                }
+                Map<String, String> stationsTrData = new HashMap<>();
+                stationsTrData.put("stations_tr", stationsTr);
+                this.mainWindow.ShowScreen(this.SetScreensContent("stations", stationsTrData));
+                this.mainWindow.ShowHelp(this.helps.get("stations"));                
+                this.previousState = this.state;
+                this.state = "stations";
+                this.previousCommandPrefix = this.commandPrefix;
+                this.commandPrefix = "/tariffs/stations";
                 this.mainWindow.SetCommandMode(this.commandPrefix);
         }
+    }
+    
+    /**
+     * Changes size of string to required length
+     * @param input Input string which size will be changed
+     * @param length Required string length
+     * @return String resized to required length
+     */
+    private String TrimString(String input, int length)
+    {
+        String reti = "";
+        if (input.length() > length - 3)
+        {
+            for (int i = 0; i < length - 3; i++)
+            {
+                reti += input.charAt(i);
+            }
+            reti += "...";
+        }
+        else
+        {
+            reti = input;
+        }
+        return reti;
+    }
+    
+    /**
+     * Sets content to the screen
+     * @param name Name of the screen
+     * @param data Data of the screen
+     * @return Screen with inserted data
+     */
+    private Screen SetScreensContent(String name, Map<String, String> data)
+    {
+        HTMLTemplateScreen sc = (HTMLTemplateScreen)this.GetScreen(name);
+        sc.SetContent(data);
+        return sc;
     }
 }

@@ -38,7 +38,7 @@ public class Stations {
     /**
      * Instance of the class
      */
-    private Stations instance = null;
+    private static Stations instance = null;
     
     /**
      * List of all available stations
@@ -208,13 +208,13 @@ public class Stations {
      * Gets instance of class Stations
      * @return Instance of class Stations
      */
-    public Stations GetInstance()
+    public static Stations GetInstance()
     {
-        if (this.instance == null)
+        if (Stations.instance == null)
         {
-            this.instance = new Stations();
+            Stations.instance = new Stations();
         }
-        return this.instance;
+        return Stations.instance;
     }
     
     /**
@@ -254,6 +254,22 @@ public class Stations {
         else
         {
             reti = "stanice jiz existuje";
+        }
+        return reti;
+    }
+    
+    /**
+     * Gets all stations available to the system
+     * @return Array with all available stations
+     */
+    public Station[] GetAllStations()
+    {
+        Station[] reti = new Station[this.stations.size()];
+        Iterator<Station> it = this.stations.iterator();
+        int idx = 0;
+        while (it.hasNext())
+        {
+            reti[idx] = it.next();
         }
         return reti;
     }
