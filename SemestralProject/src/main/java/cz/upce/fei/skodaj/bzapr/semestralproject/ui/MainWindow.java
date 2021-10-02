@@ -39,7 +39,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.Timer;
@@ -63,6 +62,11 @@ public class MainWindow extends JFrame
      * Text area representing output console
      */
     private final JEditorPane out;
+    
+    /**
+     * Scroll bar for output text area
+     */
+    private final JScrollPane outScrollBar;
     
     /**
      * Text area representing input console
@@ -199,6 +203,10 @@ public class MainWindow extends JFrame
         this.out.setFont(this.defaultFont);
         this.out.setEditable(false);
         this.out.setContentType("text/html");
+        
+        this.outScrollBar = new JScrollPane(this.out, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        this.content.add(this.outScrollBar);
+        this.outScrollBar.setBorder(javax.swing.BorderFactory.createEmptyBorder());
         
         this.inputViews  = new JPanel(new GridLayout(2,1));
         
@@ -369,7 +377,9 @@ public class MainWindow extends JFrame
     public void ShowScreen(Screen screen)
     {
         String C = screen.GetContent().replace("<head>", "<head>" + this.defaultHTML).replace("null", "");
-        this.out.setText(C);
+        this.out.setText(C); 
+        this.out.setSelectionStart(0);
+        this.out.setSelectionEnd(0);
     }
     
     /**
@@ -440,6 +450,34 @@ public class MainWindow extends JFrame
         try
         {
             doc.insertString(doc.getLength(), "\n[!] " + message, err);
+        }
+        catch (BadLocationException ex)
+        {
+            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    /**
+     * Shows success input message
+     * @param message Message which will be shown
+     */
+    public void ShowInputSuccess(String message)
+    {
+        SimpleAttributeSet def = new SimpleAttributeSet();
+        StyleConstants.setItalic(def, false);
+        StyleConstants.setBold(def, false);
+        StyleConstants.setBackground(def, Color.BLACK);
+        StyleConstants.setForeground(def, Color.LIGHT_GRAY);
+        StyleConstants.setFontFamily(def, this.defaultFont.getFamily());
+        StyleConstants.setFontSize(def, this.defaultFont.getSize());
+        
+        SimpleAttributeSet success = new SimpleAttributeSet(def);
+        StyleConstants.setForeground(success, Color.GREEN);
+        
+        Document doc = this.in.getStyledDocument();
+        try
+        {
+            doc.insertString(doc.getLength(), "\n>>> " + message, success);
         }
         catch (BadLocationException ex)
         {

@@ -22,8 +22,11 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.Scanner;
 import java.util.logging.Level;
@@ -70,24 +73,27 @@ public class Stations {
             Scanner sc;
             try
             {
-                boolean first = true;
-                sc = new Scanner(this.stationsFile);
-                while (sc.hasNext())
+                String content = new Scanner(new File(this.stationsFile.getAbsolutePath())).useDelimiter("\\Z").next();
+                int ln = 0;
+                for (String line: content.split("\n"))
                 {
-                    if (first == false)
+                    if (ln > 0)
                     {
-                        String line = sc.nextLine();
                         String[] bits = line.split(",");
+                        if (bits.length > 3)
+                        {
+                            for (int i = 3; i < bits.length; i++)
+                            {
+                                bits[2] += "," + bits[i];
+                            }
+                        }
                         Station s = new Station(bits[1], bits[2]);
                         s.SetIdentifier(Integer.parseInt(bits[0]));
                         this.stations.add(s);
                     }
-                    else
-                    {
-                        first = false;
-                    }
+                    ln++;
+                    
                 }
-                sc.close();
             }
             catch (FileNotFoundException ex)
             {
@@ -159,7 +165,7 @@ public class Stations {
         while (it.hasNext())
         {
             Station s = it.next();
-            if (s != null && s.GetName().toLowerCase() == name.toLowerCase())
+            if (s != null && s.GetName().toLowerCase().equals(name.toLowerCase()))
             {
                 reti = s;
                 break;
@@ -180,7 +186,7 @@ public class Stations {
         while (it.hasNext())
         {
             Station s = it.next();
-            if (s != null && s.GetAbbrevation().toLowerCase() == abbr.toLowerCase())
+            if (s != null && s.GetAbbrevation().toLowerCase().equals(abbr.toLowerCase()))
             {
                 reti = s;
                 break;
@@ -200,6 +206,30 @@ public class Stations {
         if (reti == null)
         {
             reti = this.GetStationByAbbrevation(nameOrAbbr);
+        }
+        return reti;
+    }
+    
+    /**
+     * Gets station by its identifier
+     * @param identifier Identifier of station
+     * @return Station selected by its identifier or <code>null</code>
+     */
+    public Station GetStation (int identifier)
+    {
+        Station reti = null;
+        ListIterator<Station> it = this.stations.listIterator();
+        while (it.hasNext())
+        {
+            Station s = it.next();
+            if (s != null)
+            {
+                if (s.GetIdentifier() == identifier)
+                {
+                    reti = s;
+                    break;
+                }
+            }
         }
         return reti;
     }
@@ -265,12 +295,114 @@ public class Stations {
     public Station[] GetAllStations()
     {
         Station[] reti = new Station[this.stations.size()];
-        Iterator<Station> it = this.stations.iterator();
+        ListIterator<Station> it = this.stations.listIterator();
         int idx = 0;
         while (it.hasNext())
         {
-            reti[idx] = it.next();
+            Station s = it.next();
+            if (s != null)
+            {
+                reti[idx] = s;
+            }
+            idx++;
+        }
+        Arrays.sort(reti, new Comparator<Station>(){
+            @Override
+            public int compare(Station s1, Station s2)
+            {
+                return s1.GetName().toLowerCase().compareTo(s2.GetName().toLowerCase());
+            }            
+        });
+        return reti;
+    }
+    
+    /**
+     * Checks, whether stations abbreviation is free to use
+     * @param abbr Abbreviation which will be checked
+     * @return <code>TRUE</code> if stations abbreviation is free to use, <code>FALSE</code> otherwise
+     */
+    public boolean CheckFreeAbbr(String abbr)
+    {
+        boolean reti = true;
+        Iterator<Station> it = this.stations.iterator();
+        while (it.hasNext())
+        {
+            Station s = it.next();
+            if (s != null)
+            {
+                if (s.GetAbbrevation().toLowerCase().equals(abbr.toLowerCase()))
+                {
+                    reti = false;
+                    break;
+                }
+            }
         }
         return reti;
+    }
+    
+    /**
+     * Checks, whether stations name is free to use
+     * @param name Name which will be checked
+     * @return <code>TRUE</code> if name is free to use, <code>FALSE</code> otherwise
+     */
+    public boolean CheckFreeName(String name)
+    {
+        boolean reti = true;
+        Iterator<Station> it = this.stations.iterator();
+        while (it.hasNext())
+        {
+            Station s = it.next();
+            if (s != null)
+            {
+                if (s.GetName().toLowerCase().equals(name.toLowerCase()))
+                {
+                    reti = false;
+                    break;
+                }
+            }
+        }
+        return reti;
+    }
+    
+    /**
+     * Generates table rows with all stations
+     * @return String containing HTML table rows with all stations
+     */
+    public String GenerateTableRows()
+    {
+        String reti = "";
+        for (Station s : this.GetAllStations())
+        {
+            reti += "<tr><td style=\"color: green;\">" + s.GetAbbrevation().toUpperCase() + "</td><td>" + s.GetName() + "</td></tr>";
+        }
+        return reti;
+    }
+    
+    /**
+     * Deletes station from system
+     * @param s Station which will be deleted from system
+     */
+    public void DeleteStation(Station s)
+    {
+        if (this.stations.contains(s))
+        {
+            this.stations.remove(s);
+            this.SaveStations();
+        }
+    }
+    
+    /**
+     * Edits station in system
+     * @param s Station which will be edited
+     * @param newName New name of the station
+     * @param newAbbr New abbrevation of station
+     */
+    public void EditStation(Station s, String newName, String newAbbr)
+    {
+        this.stations.remove(s);
+        Station newS = new Station(newAbbr, newName);
+        newS.SetIdentifier(s.GetIdentifier());
+        this.stations.add(newS);
+        this.SaveStations();        
     }
 }

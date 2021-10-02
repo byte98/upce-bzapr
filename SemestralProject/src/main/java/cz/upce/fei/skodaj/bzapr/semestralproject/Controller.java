@@ -17,18 +17,16 @@
  */
 package cz.upce.fei.skodaj.bzapr.semestralproject;
 
-import cz.upce.fei.skodaj.bzapr.semestralproject.data.Station;
 import cz.upce.fei.skodaj.bzapr.semestralproject.data.Stations;
 import cz.upce.fei.skodaj.bzapr.semestralproject.data.Tariffs;
 import cz.upce.fei.skodaj.bzapr.semestralproject.ui.MainWindow;
-import cz.upce.fei.skodaj.bzapr.semestralproject.ui.help.Help;
-import cz.upce.fei.skodaj.bzapr.semestralproject.ui.help.HelpFactory;
-import cz.upce.fei.skodaj.bzapr.semestralproject.ui.screens.HTMLTemplateScreen;
-import cz.upce.fei.skodaj.bzapr.semestralproject.ui.screens.Screen;
-import cz.upce.fei.skodaj.bzapr.semestralproject.ui.screens.ScreenFactory;
-import java.awt.Color;
+import cz.upce.fei.skodaj.bzapr.semestralproject.states.State;
+import cz.upce.fei.skodaj.bzapr.semestralproject.states.StateFactory;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
@@ -44,143 +42,32 @@ public class Controller {
     private static Controller instance = null;
     
     /**
-     * List of all available screens
+     * List of all available states of program
      */
-    private final Map<String, Screen> screens;
-    
-    /**
-     * List of all available helps to commands
-     */
-    private final Map<String, Help[]> helps;
-    
-    /**
-     * Main window of the program
-     */
-    private MainWindow mainWindow;
-    
-    /**
-     * Actual state of program
-     */
-    private String state;
-    
-    /**
-     * Previous state of program
-     */
-    private String previousState;
-    
-    /**
-     * Actual command prefix
-     */
-    private String commandPrefix;
-    
-    /**
-     * Previously used command prefix
-     */
-    private String previousCommandPrefix;
-    
-    /**
-     * Manager of stations in system
-     */
-    private Stations stationManager;
-    
-    /**
-     * Manager of tariffs in the system
-     */
-    private Tariffs tariffManager;
+   private final List<State> states;
+   
+   /**
+    * Main window of the program
+    */
+   private MainWindow mainWindow;
+   
+   /**
+    * Actual state of program
+    */
+   private State actualState = null;
+   
+   /**
+    * Previous state of program
+    */
+   private State previousState = null;
     
     /**
      * Creates new instance of controller
      */
     private Controller()
     {
-        this.screens = new HashMap<>();
-        this.AddScreens();
-        
-        this.helps = new HashMap<>();
-        this.AddHelps();
-        
-        this.commandPrefix = "";
-        this.previousCommandPrefix = "";
-        
-        this.stationManager = Stations.GetInstance();
-        this.tariffManager = Tariffs.GetInstance();
-    }
-    
-    /**
-     * Adds helps managed by controller
-     */
-    private void AddHelps()
-    {
-        // Welcome help
-        Help[] wH = {
-          HelpFactory.CreateSimpleHelp("sale", Color.CYAN, "Rezim prodeje"),
-          HelpFactory.CreateSimpleHelp("tariffs", Color.CYAN, "Rezim upravy tarifu"),
-          HelpFactory.CreateSimpleHelp("exit", Color.MAGENTA, "Ukoncit program")
-        };
-        this.helps.put("welcome", wH);
-        this.helps.put("welcome-no-tariff", wH);
-        
-        // Exit help
-        Help[] ex = {
-          HelpFactory.CreateSimpleHelp("yes", Color.YELLOW, "Ukoncit program"),
-          HelpFactory.CreateSimpleHelp("no", Color.YELLOW, "Zrusit")
-        };
-        this.helps.put("exit", ex);
-        
-        // Tariffs help
-        Help[] tH = {
-          HelpFactory.CreateSimpleHelp("stations", Color.YELLOW, "Rezim upravy stanic"),
-          HelpFactory.CreateSimpleHelp("distances", Color.BLUE, "Rezim upravy vzdalenosti"),
-          HelpFactory.CreateSimpleHelp("edit", Color.GREEN, "Rezim upravy tarifu"),
-          HelpFactory.CreateSimpleHelp("back", Color.MAGENTA, "Zpet")
-        };
-        this.helps.put("tariffs", tH);
-        
-        // Stations help
-        Help[] sH = {
-          HelpFactory.CreateSimpleHelp("<zkratka nebo nazev>", Color.YELLOW, "Rezim upravy stanice"),
-          HelpFactory.CreateSimpleHelp("add", Color.CYAN, "Rezim pridani stanice"),
-          HelpFactory.CreateSimpleHelp("back", Color.MAGENTA, "Zpet")
-        };
-        this.helps.put("stations", sH);
-    }
-    
-    /**
-     * Adds screens managed by controller
-     */
-    private void AddScreens()
-    {
-        Screen screens[] = {
-          ScreenFactory.CreateHTMLScreen("welcome", "welcome.html"),
-          ScreenFactory.CreateHTMLScreen("welcome-no-tariff", "welcome-no-tariff.html"),
-          ScreenFactory.CreateHTMLScreen("exit", "exit.html"),
-          new HTMLTemplateScreen("tariffs", "tariffs.html"),
-          new HTMLTemplateScreen("stations", "stations.html")
-
-        };
-        
-        for (Screen screen : screens) {
-            this.AddScreen(screen);
-        }
-   }
-    
-    /**
-     * Adds screen to controller
-     * @param screen Screen which will be added
-     */
-    private void AddScreen(Screen screen)
-    {
-        this.screens.put(screen.GetName(), screen);
-    }
-    
-    /**
-     * Gets screen by its name
-     * @param name Name of screen
-     * @return Screen selected by its name
-     */
-    private Screen GetScreen(String name)
-    {
-        return this.screens.get(name);
+        this.states = new ArrayList<>();        
+        this.AddStates();
     }
     
     /**
@@ -196,12 +83,8 @@ public class Controller {
                 mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 mainWindow.pack();
                 mainWindow.setVisible(true);
-                mainWindow.ShowScreen(GetScreen("welcome"));
-                mainWindow.ShowHelp(helps.get("welcome"));
                 mainWindow.SetController(Controller.instance);
-                mainWindow.SetStrict(true);
-                state = "welcome";
-                previousState = null;
+                ChangeState("welcome");
             }
         });
     }
@@ -222,104 +105,30 @@ public class Controller {
     }
     
     /**
+     * Adds available states of program
+     */
+    private void AddStates()
+    {
+        this.states.add(StateFactory.CreateState(this, "welcome"));
+        this.states.add(StateFactory.CreateState(this, "exit"));
+        this.states.add(StateFactory.CreateState(this, "data"));
+        this.states.add(StateFactory.CreateState(this, "stations"));
+        this.states.add(StateFactory.CreateState(this, "stations-add"));
+        this.states.add(StateFactory.CreateState(this, "stations-add-name"));
+        this.states.add(StateFactory.CreateState(this, "stations-add-abbr"));
+        this.states.add(StateFactory.CreateState(this, "stations-edit"));
+        this.states.add(StateFactory.CreateState(this, "stations-edit-name"));
+        this.states.add(StateFactory.CreateState(this, "stations-edit-abbr"));
+        this.states.add(StateFactory.CreateState(this, "stations-delete"));
+    }
+    
+    /**
      * Method which handles commands
      * @param command Command which will be handled
      */
     public void HandleCommand(String command)
     {
-        switch (command.toLowerCase())
-        {
-            case "exit":
-                this.mainWindow.SetStrict(true);
-                this.mainWindow.ShowScreen(this.GetScreen("exit"));
-                this.mainWindow.ShowHelp(this.helps.get("exit"));
-                this.previousState = this.state;
-                this.state = "exit";
-                this.previousCommandPrefix = this.commandPrefix;
-                this.commandPrefix = "/exit?";
-                this.mainWindow.SetCommandMode(this.commandPrefix);
-                break;
-            case "yes":
-                if ("exit".equals(this.state)) // Exit confirmation
-                {
-                    this.mainWindow.dispatchEvent(new WindowEvent(this.mainWindow, WindowEvent.WINDOW_CLOSING));
-                }
-                break;
-            case "no":
-                if ("exit".equals(this.state))
-                {
-                    this.mainWindow.SetStrict(true);
-                    this.state = this.previousState;
-                    this.previousState = "exit";
-                    this.mainWindow.ShowScreen(this.GetScreen(this.state));
-                    this.mainWindow.ShowHelp(this.helps.get(this.state));                    
-                    this.commandPrefix = this.previousCommandPrefix;
-                    this.previousCommandPrefix = "/exit?";
-                    this.mainWindow.SetCommandMode(this.commandPrefix);
-                }
-                break;
-            case "tariffs":
-                this.mainWindow.SetStrict(true);
-                Map<String,String> stationData = new HashMap<>();
-                Station[] stations = this.stationManager.GetAllStations();
-                String stationsList = "";
-                int idx = 0;
-                for (Station s: stations)
-                {
-                    stationsList += s.GetName();
-                    if (idx < stationData.size() - 1) stationsList += ",";
-                }                
-                stationData.put("station_list", this.TrimString(stationsList, 90));
-                this.mainWindow.ShowScreen(this.SetScreensContent("tariffs", stationData));
-                this.mainWindow.ShowHelp(this.helps.get("tariffs"));
-                this.previousState = this.state;
-                this.state = "tariffs";
-                this.previousCommandPrefix = this.commandPrefix;
-                this.commandPrefix = "/tariffs";
-                this.mainWindow.SetCommandMode(this.commandPrefix);
-                break;
-            case "back":                
-                this.mainWindow.SetStrict(true);
-                if (this.previousState == "stations")
-                {
-                    this.mainWindow.ShowHelp(this.helps.get("welcome"));
-                    this.mainWindow.ShowScreen(this.GetScreen("welcome"));
-                    this.previousState = this.state;
-                    this.state = "welcome";
-                    this.previousCommandPrefix = this.commandPrefix;
-                    this.commandPrefix = "";
-                    this.mainWindow.SetCommandMode(this.commandPrefix);
-                }
-                else
-                {
-                    this.mainWindow.ShowScreen(this.GetScreen(this.previousState));
-                    this.mainWindow.ShowHelp(this.helps.get(this.previousState));
-                    String tmp = this.state;
-                    this.state = this.previousState;
-                    this.previousState = tmp;
-                    tmp = this.commandPrefix;
-                    this.commandPrefix = this.previousCommandPrefix;
-                    this.previousCommandPrefix = tmp;
-                    this.mainWindow.SetCommandMode(this.commandPrefix);
-                }                
-                break;
-            case "stations":
-                this.mainWindow.SetStrict(false);
-                String stationsTr = " ";
-                for (Station s: this.stationManager.GetAllStations())
-                {
-                    stationsTr += "<tr><td>" + s.GetAbbrevation() + "</td><td>" + s.GetName() + "</td></tr>";
-                }
-                Map<String, String> stationsTrData = new HashMap<>();
-                stationsTrData.put("stations_tr", stationsTr);
-                this.mainWindow.ShowScreen(this.SetScreensContent("stations", stationsTrData));
-                this.mainWindow.ShowHelp(this.helps.get("stations"));                
-                this.previousState = this.state;
-                this.state = "stations";
-                this.previousCommandPrefix = this.commandPrefix;
-                this.commandPrefix = "/tariffs/stations";
-                this.mainWindow.SetCommandMode(this.commandPrefix);
-        }
+        this.actualState.HandleInput(command);
     }
     
     /**
@@ -328,7 +137,7 @@ public class Controller {
      * @param length Required string length
      * @return String resized to required length
      */
-    private String TrimString(String input, int length)
+    public static String TrimString(String input, int length)
     {
         String reti = "";
         if (input.length() > length - 3)
@@ -347,15 +156,115 @@ public class Controller {
     }
     
     /**
-     * Sets content to the screen
-     * @param name Name of the screen
-     * @param data Data of the screen
-     * @return Screen with inserted data
+     * Gets state of program by its name
+     * @param name Name of state
+     * @return State of program or <code>NULL</code>
      */
-    private Screen SetScreensContent(String name, Map<String, String> data)
+    private State GetState (String name)
     {
-        HTMLTemplateScreen sc = (HTMLTemplateScreen)this.GetScreen(name);
-        sc.SetContent(data);
-        return sc;
+        State reti = null;
+        Iterator<State> it = this.states.iterator();
+        while (it.hasNext())
+        {
+            State s = it.next();
+            if (s != null && s.GetName().toLowerCase() == name.toLowerCase())
+            {
+                reti = s;
+                break;
+            }
+        }
+        return reti;
+    }
+    
+    /**
+     * Changes state of program
+     * @param nextState Name of state of program
+     */
+    public void ChangeState(String nextState)
+    {
+        State state = this.GetState(nextState);
+        if (state != null)
+        {
+            this.previousState = this.actualState;
+            this.actualState = state;
+            this.mainWindow.ShowScreen(this.actualState.GetScreen());
+            this.mainWindow.SetStrict(this.actualState.GetStrict());
+            this.mainWindow.SetCommandMode(this.actualState.GetCommandPrefix());
+            this.mainWindow.ShowHelp(this.actualState.GetHelps());
+        }
+    }
+    
+    /**
+     * Changes state of program
+     * @param nextState Name of state of program
+     * @param data Data which will be displayed on screen
+     */
+    public void ChangeState(String nextState, Map<String, String> data)
+    {
+        State state = this.GetState(nextState);
+        if (state != null)
+        {
+            this.previousState = this.actualState;
+            this.actualState = state;
+            this.mainWindow.ShowScreen(this.actualState.GetScreen(data));
+            this.mainWindow.SetStrict(this.actualState.GetStrict());
+            this.mainWindow.SetCommandMode(this.actualState.GetCommandPrefix());
+            this.mainWindow.ShowHelp(this.actualState.GetHelps());
+        }
+    }
+    
+    /**
+     * Changes state of program to previous one
+     */
+    public void ChangeToPreviousState()
+    {
+        if (this.previousState != null)
+        {
+            State s = this.actualState;
+            this.actualState = this.previousState;
+            this.previousState = s;
+            this.ChangeState(this.actualState.GetName());
+        }
+    }
+    
+    /**
+     * Changes state of program to previous one
+     * @param data Data which will be displayed on screen
+     */
+    public void ChangeToPreviousState(Map<String, String> data)
+    {
+        if (this.previousState != null)
+        {
+            State s = this.actualState;
+            this.actualState = this.previousState;
+            this.previousState = s;
+            this.ChangeState(this.actualState.GetName(), data);
+        }
+    }
+    
+    /**
+     * Stops program
+     */
+    public void Stop()
+    {
+        this.mainWindow.dispatchEvent(new WindowEvent(this.mainWindow, WindowEvent.WINDOW_CLOSING));
+    }
+    
+    /**
+     * Shows error message in console
+     * @param message Message which will be shown
+     */
+    public void ShowError(String message)
+    {
+        this.mainWindow.ShowInputError(message);
+    }
+    
+    /**
+     * Shows success message in console
+     * @param message Message which will be shown
+     */
+    public void ShowSucess(String message)
+    {
+        this.mainWindow.ShowInputSuccess(message);
     }
 }
