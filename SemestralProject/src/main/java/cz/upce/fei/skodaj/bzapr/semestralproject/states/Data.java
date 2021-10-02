@@ -18,6 +18,7 @@
 package cz.upce.fei.skodaj.bzapr.semestralproject.states;
 
 import cz.upce.fei.skodaj.bzapr.semestralproject.Controller;
+import cz.upce.fei.skodaj.bzapr.semestralproject.data.Distances;
 import cz.upce.fei.skodaj.bzapr.semestralproject.data.Station;
 import cz.upce.fei.skodaj.bzapr.semestralproject.data.Stations;
 import cz.upce.fei.skodaj.bzapr.semestralproject.ui.help.Help;
@@ -81,6 +82,26 @@ public class Data extends State {
         }
         stString = Controller.TrimString(stString, 128);
         data.put("station_list", stString);
+        
+        String distString = new String();
+        Station sts[] = Stations.GetInstance().GetAllStations();
+        while (distString.length() <= 128)
+        {
+            if (sts.length < 1)
+            {
+                break;
+            }
+            else
+            {
+                int f = java.util.concurrent.ThreadLocalRandom.current().nextInt(0, sts.length + 1);
+                Station from = sts[f];
+                int t = java.util.concurrent.ThreadLocalRandom.current().nextInt(0, sts.length + 1);
+                Station to = sts[t];
+                distString += "[" + from.GetAbbrevation() + " -> " + to.GetAbbrevation() + ": " + Distances.GetInstance().GetDistance(from, to) + " km] ";
+            }
+        }
+        data.put("distances_list", Controller.TrimString(distString, 128));
+        
         ((HTMLTemplateScreen)this.screen).SetContent(data);
         return this.screen;
     }

@@ -63,6 +63,11 @@ public class Distance
      */
     public int GetDistance(Station to)
     {
-        return this.distances.get(to);
+        int reti = 0;
+        if (this.distances.get(to) != null)
+        {
+            reti = this.distances.get(to);
+        }
+        return reti;
     }
 }

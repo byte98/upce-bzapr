@@ -118,7 +118,7 @@ public class Tariff
             dataList.add(entry.getValue());
         });
         
-        ByteArrayOutputStream baos = new ByteArrayOutputStream(dataList.size() * Integer.SIZE / 8);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(dataList.size() * Integer.BYTES);
         DataOutputStream dos = new DataOutputStream(baos);
         Iterator<Integer> it = dataList.iterator();
         while (it.hasNext())
