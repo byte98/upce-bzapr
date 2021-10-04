@@ -245,4 +245,30 @@ public class Distances
         }
         return reti;
     }
+    
+    /**
+     * Sets distance between stations
+     * @param from Origin station
+     * @param to Destination station
+     * @param distance Distance between origin and destination
+     */
+    public void SetDistance(Station from, Station to, int distance)
+    {
+        Distance d = this.dist.get(from);
+        if (d == null)
+        {
+            d = new Distance(from);
+            this.dist.put(from, d);
+        }
+        d.SetDistance(to, distance);
+        
+        Distance b = this.dist.get(to);
+        if (b == null)
+        {
+            b = new Distance(to);
+            this.dist.put(to, d);
+        }
+        b.SetDistance(from, distance);
+        this.SaveDistances();
+    }
 }

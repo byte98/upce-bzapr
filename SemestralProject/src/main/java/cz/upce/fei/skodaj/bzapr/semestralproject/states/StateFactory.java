@@ -45,8 +45,9 @@ public class StateFactory
             case   "stations-add-abbr": reti = new StationsAddAbbr(controller);  break;
             case  "stations-edit-name": reti = new StationsEditName(controller); break;
             case  "stations-edit-abbr": reti = new StationsEditAbbr(controller); break;
-            case       "stations-edit": reti = new StationsEdit(controller); break;
+            case       "stations-edit": reti = new StationsEdit(controller);     break;
             case     "stations-delete": reti = new StationsDelete(controller);   break;
+            case           "distances": reti = new Distances(controller);        break;
         }
         return reti;
     }

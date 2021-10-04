@@ -120,6 +120,7 @@ public class Controller {
         this.states.add(StateFactory.CreateState(this, "stations-edit-name"));
         this.states.add(StateFactory.CreateState(this, "stations-edit-abbr"));
         this.states.add(StateFactory.CreateState(this, "stations-delete"));
+        this.states.add(StateFactory.CreateState(this, "distances"));
     }
     
     /**

@@ -93,9 +93,9 @@ public class Data extends State {
             }
             else
             {
-                int f = java.util.concurrent.ThreadLocalRandom.current().nextInt(0, sts.length + 1);
+                int f = java.util.concurrent.ThreadLocalRandom.current().nextInt(0, sts.length);
                 Station from = sts[f];
-                int t = java.util.concurrent.ThreadLocalRandom.current().nextInt(0, sts.length + 1);
+                int t = java.util.concurrent.ThreadLocalRandom.current().nextInt(0, sts.length);
                 Station to = sts[t];
                 distString += "[" + from.GetAbbrevation() + " -> " + to.GetAbbrevation() + ": " + Distances.GetInstance().GetDistance(from, to) + " km] ";
             }
@@ -113,6 +113,7 @@ public class Data extends State {
         {
             case "back": this.controller.ChangeState("welcome"); break;
             case "stations": this.controller.ChangeState("stations"); break;
+            case "distances": this.controller.ChangeState("distances"); break;
         }
     }
     
