@@ -28,29 +28,27 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Class representing state of program which displays distances menu
+ * Class representing state of program which can display set distances between stations
  * @author Jiri Skoda <jiri.skoda@student.upce.cz>
  */
-public class Distances extends State
+public class DistancesView extends State
 {
 
     /**
-     * Creates new state of program with distances menu
+     * Creates new state of program with viewer of set distances between stations
      * @param controller 
      */
-    public Distances(Controller controller)
+    public DistancesView(Controller controller)
     {
         super(controller);
-        this.commandPrefix = "/data/distances";
+        this.commandPrefix = "/data/distances/view";
         this.screen = new HTMLTemplateScreen("distances", "distances.html");
-        this.name = "distances";
-        this.strict = true;
+        this.name = "distances-view";
+        this.strict = false;
         
-        this.helps = new Help[4];
-        this.helps[0] = HelpFactory.CreateSimpleHelp("create", Color.YELLOW, "Rezim vytvareni tabulky vzdalenosti");
-        this.helps[1] = HelpFactory.CreateSimpleHelp("set", Color.YELLOW, "Rezim upravy tabulky vzdalenosti");
-        this.helps[2] = HelpFactory.CreateSimpleHelp("view", Color.YELLOW, "Rezim prohlizeni tabulky vzdalenosti");
-        this.helps[3] = HelpFactory.CreateSimpleHelp("back", Color.MAGENTA, "Zpet");
+        this.helps = new Help[2];
+        this.helps[0] = HelpFactory.CreateSimpleHelp("<nazev nebo zkratka stanice>", Color.YELLOW, "Stanice pro zobrazeni vzdalenosti");
+        this.helps[1] = HelpFactory.CreateSimpleHelp("back", Color.MAGENTA, "Zpet");
     }
     
     @Override
@@ -65,12 +63,23 @@ public class Distances extends State
     @Override
     public void HandleInput(String input)
     {
-        switch (input.toLowerCase())
+        if (input.toLowerCase().equals("back"))
         {
-            case "back": this.controller.ChangeState("data"); break;
-            case "create": this.controller.ChangeState("distances-create"); break;
-            case "view": this.controller.ChangeState("distances-view"); break;
-            
+            this.controller.ChangeState("distances");
+        }
+        else
+        {
+            Station s = cz.upce.fei.skodaj.bzapr.semestralproject.data.Stations.GetInstance().GetStation(input);
+            if (s == null)
+            {
+                this.controller.ShowError("Neznama stanice '" + input + "'!");
+            }
+            else
+            {
+                Map<String, String> data = new HashMap<>();
+                data.put("station", s.GetAbbrevation());
+                this.controller.ChangeState("distances-view-station", data);
+            }
         }
     }
     

@@ -36,19 +36,21 @@ public class StateFactory
         State reti = null;
         switch (name.toLowerCase())
         {
-            case             "welcome": reti = new Welcome(controller);          break;
-            case                "exit": reti = new Exit(controller);             break; 
-            case                "data": reti = new Data(controller);             break; 
-            case            "stations": reti = new Stations(controller);         break;
-            case        "stations-add": reti = new StationsAdd(controller);      break;
-            case   "stations-add-name": reti = new StationsAddName(controller);  break;
-            case   "stations-add-abbr": reti = new StationsAddAbbr(controller);  break;
-            case  "stations-edit-name": reti = new StationsEditName(controller); break;
-            case  "stations-edit-abbr": reti = new StationsEditAbbr(controller); break;
-            case       "stations-edit": reti = new StationsEdit(controller);     break;
-            case     "stations-delete": reti = new StationsDelete(controller);   break;
-            case           "distances": reti = new Distances(controller);        break;
-            case    "distances-create": reti = new DistancesCreate(controller);  break;
+            case                "welcome": reti = new Welcome(controller);              break;
+            case                   "exit": reti = new Exit(controller);                 break; 
+            case                   "data": reti = new Data(controller);                 break; 
+            case               "stations": reti = new Stations(controller);             break;
+            case           "stations-add": reti = new StationsAdd(controller);          break;
+            case      "stations-add-name": reti = new StationsAddName(controller);      break;
+            case      "stations-add-abbr": reti = new StationsAddAbbr(controller);      break;
+            case     "stations-edit-name": reti = new StationsEditName(controller);     break;
+            case     "stations-edit-abbr": reti = new StationsEditAbbr(controller);     break;
+            case          "stations-edit": reti = new StationsEdit(controller);         break;
+            case        "stations-delete": reti = new StationsDelete(controller);       break;
+            case              "distances": reti = new Distances(controller);            break;
+            case       "distances-create": reti = new DistancesCreate(controller);      break;
+            case         "distances-view": reti = new DistancesView(controller);        break;
+            case "distances-view-station": reti = new DistancesViewStation(controller); break;
         }
         return reti;
     }

@@ -28,50 +28,56 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Class representing state of program which displays distances menu
+ * Class representing state of program which displays table of distances from station
  * @author Jiri Skoda <jiri.skoda@student.upce.cz>
  */
-public class Distances extends State
+public class DistancesViewStation extends State
 {
 
     /**
-     * Creates new state of program with distances menu
+     * Origin station from which distances will be displayed
+     */
+    private Station origin;
+    
+    /**
+     * Creates new state of program with table of distances from station
      * @param controller 
      */
-    public Distances(Controller controller)
+    public DistancesViewStation(Controller controller)
     {
         super(controller);
-        this.commandPrefix = "/data/distances";
-        this.screen = new HTMLTemplateScreen("distances", "distances.html");
-        this.name = "distances";
+        this.commandPrefix = "/data/distances/view/";
+        this.screen = new HTMLTemplateScreen("distances-view-station", "distances-view-station.html");
+        this.name = "distances-view-station";
         this.strict = true;
         
-        this.helps = new Help[4];
-        this.helps[0] = HelpFactory.CreateSimpleHelp("create", Color.YELLOW, "Rezim vytvareni tabulky vzdalenosti");
-        this.helps[1] = HelpFactory.CreateSimpleHelp("set", Color.YELLOW, "Rezim upravy tabulky vzdalenosti");
-        this.helps[2] = HelpFactory.CreateSimpleHelp("view", Color.YELLOW, "Rezim prohlizeni tabulky vzdalenosti");
-        this.helps[3] = HelpFactory.CreateSimpleHelp("back", Color.MAGENTA, "Zpet");
+        this.helps = new Help[1];
+        this.helps[0] = HelpFactory.CreateSimpleHelp("back", Color.MAGENTA, "Zrusit");
     }
     
     @Override
-    public Screen GetScreen()
+    public Screen GetScreen(Map<String, String> data)
     {
-        Map<String, String> data = new HashMap<>();
-        data.put("stations_tr", cz.upce.fei.skodaj.bzapr.semestralproject.data.Stations.GetInstance().GenerateTableRows());
-        ((HTMLTemplateScreen)this.screen).SetContent(data);
-        return this.screen;
+       Station s = cz.upce.fei.skodaj.bzapr.semestralproject.data.Stations.GetInstance().GetStation(data.get("station"));
+       if (s != null)
+       {
+           data.put("station_from", s.GetName() + " (" + s.GetAbbrevation() + ")");
+           data.put("stations_distances_tr", cz.upce.fei.skodaj.bzapr.semestralproject.data.Distances.GetInstance().GenerateDistancesRows(s));
+           this.origin = s;
+           ((HTMLTemplateScreen) this.screen).SetContent(data);           
+       }
+       return this.screen;
     }
-
+    
+    
     @Override
     public void HandleInput(String input)
     {
-        switch (input.toLowerCase())
+        if (input.toLowerCase().equals("back"))
         {
-            case "back": this.controller.ChangeState("data"); break;
-            case "create": this.controller.ChangeState("distances-create"); break;
-            case "view": this.controller.ChangeState("distances-view"); break;
-            
+            this.controller.ChangeState("distances-view");
         }
     }
+    
     
 }

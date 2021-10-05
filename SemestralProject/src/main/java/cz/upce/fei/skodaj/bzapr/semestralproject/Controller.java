@@ -122,6 +122,8 @@ public class Controller {
         this.states.add(StateFactory.CreateState(this, "stations-delete"));
         this.states.add(StateFactory.CreateState(this, "distances"));
         this.states.add(StateFactory.CreateState(this, "distances-create"));
+        this.states.add(StateFactory.CreateState(this, "distances-view"));
+        this.states.add(StateFactory.CreateState(this, "distances-view-station"));
     }
     
     /**
@@ -290,4 +292,5 @@ public class Controller {
     {
         this.mainWindow.ShowScreen(this.actualState.GetScreen(data));
     }
+    
 }
