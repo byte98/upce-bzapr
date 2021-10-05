@@ -48,6 +48,7 @@ public class StateFactory
             case       "stations-edit": reti = new StationsEdit(controller);     break;
             case     "stations-delete": reti = new StationsDelete(controller);   break;
             case           "distances": reti = new Distances(controller);        break;
+            case    "distances-create": reti = new DistancesCreate(controller);  break;
         }
         return reti;
     }

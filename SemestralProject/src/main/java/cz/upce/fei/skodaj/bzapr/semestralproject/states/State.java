@@ -137,4 +137,9 @@ public abstract class State {
      */
     public abstract void HandleInput(String input);
     
+    /**
+     * Loads screen
+     */
+    public void Load(){};
+    
 }

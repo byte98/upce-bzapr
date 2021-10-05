@@ -271,4 +271,19 @@ public class Distances
         b.SetDistance(from, distance);
         this.SaveDistances();
     }
+    
+    /**
+     * Sets all distances between stations to zero
+     */
+    public void SetAllZeroes()
+    {
+        Station stations[] = Stations.GetInstance().GetAllStations();
+        for (Station from : stations)
+        {
+            for (Station to : stations)
+            {
+                this.SetDistance(from, to, 0);
+            }
+        }
+    }
 }

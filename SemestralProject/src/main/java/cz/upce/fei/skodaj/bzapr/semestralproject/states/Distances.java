@@ -68,6 +68,7 @@ public class Distances extends State
         switch (input.toLowerCase())
         {
             case "back": this.controller.ChangeState("data"); break;
+            case "create": this.controller.ChangeState("distances-create"); break;
             
         }
     }

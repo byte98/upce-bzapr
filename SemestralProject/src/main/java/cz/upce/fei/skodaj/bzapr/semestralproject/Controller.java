@@ -121,6 +121,7 @@ public class Controller {
         this.states.add(StateFactory.CreateState(this, "stations-edit-abbr"));
         this.states.add(StateFactory.CreateState(this, "stations-delete"));
         this.states.add(StateFactory.CreateState(this, "distances"));
+        this.states.add(StateFactory.CreateState(this, "distances-create"));
     }
     
     /**
@@ -188,6 +189,7 @@ public class Controller {
         {
             this.previousState = this.actualState;
             this.actualState = state;
+            this.actualState.Load();
             this.mainWindow.ShowScreen(this.actualState.GetScreen());
             this.mainWindow.SetStrict(this.actualState.GetStrict());
             this.mainWindow.SetCommandMode(this.actualState.GetCommandPrefix());
@@ -207,6 +209,7 @@ public class Controller {
         {
             this.previousState = this.actualState;
             this.actualState = state;
+            this.actualState.Load();
             this.mainWindow.ShowScreen(this.actualState.GetScreen(data));
             this.mainWindow.SetStrict(this.actualState.GetStrict());
             this.mainWindow.SetCommandMode(this.actualState.GetCommandPrefix());
@@ -267,5 +270,22 @@ public class Controller {
     public void ShowSucess(String message)
     {
         this.mainWindow.ShowInputSuccess(message);
+    }
+    
+    /**
+     * Redraws actual screen
+     */
+    public void ReDraw()
+    {
+        this.mainWindow.ShowScreen(this.actualState.GetScreen());
+    }
+    
+    /**
+     * Redraws actual screen
+     * @param data data which will be displayed on the screen
+     */
+    public void ReDraw(Map<String, String> data)
+    {
+        this.mainWindow.ShowScreen(this.actualState.GetScreen(data));
     }
 }
