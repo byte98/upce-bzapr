@@ -194,6 +194,7 @@ public class Controller {
             this.mainWindow.SetStrict(this.actualState.GetStrict());
             this.mainWindow.SetCommandMode(this.actualState.GetCommandPrefix());
             this.mainWindow.ShowHelp(this.actualState.GetHelps());
+            this.actualState.Control();
         }
     }
     
@@ -214,6 +215,7 @@ public class Controller {
             this.mainWindow.SetStrict(this.actualState.GetStrict());
             this.mainWindow.SetCommandMode(this.actualState.GetCommandPrefix());
             this.mainWindow.ShowHelp(this.actualState.GetHelps());
+            this.actualState.Control();
         }
     }
     

@@ -31,49 +31,34 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
         </style>
     </head>
     <body>
-        <div style="background-color: blue; color: yellow">
-            <h2>Vytvareni tabulky vzdalenosti</h2>
-            <hr>
-            <table>
-                <thead>
-                    <tr>
-                        <th colspan="2">Zadejte vzdalenost</th>
-                    </tr>
-                    <tr>
-                        <td>
-                            Ze stanice
-                        </td>
-                        <td>
-                            {$station_from}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            Do stanice
-                        </td>
-                        <td>
-                            {$station_to}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            Vzdalenost
-                        </td>
-                        <td>
-                            {$distance} km
-                        </td>
-                    </tr>
-                </thead>
-            </table>           
-        </div>
         <center>
+            <div style="background-color: blue; color: yellow">
+                <h2>Vytvareni tabulky v zdalenosti</h2>
+                <hr>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>Ze stanice</td>
+                            <td>&nbsp;<i style="color: white">{$station_from}</i>&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td>Do stanice</td>
+                            <td>&nbsp;<i style="color: white">{$station_to}</i>&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td>Vzdalenost</td>
+                            <td style="background-color: yellow; color: black;"><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;km&nbsp;</i></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
             <table>
                 <caption>Vzdalenosti ze stanice {$station_from}</caption>
                 <thead>
                     <tr>
                         <th style="color: green;">Zkratka</th>
                         <th>Nazev</th>
-                        <th style="color: cyan">Vzdalenost</th>
+                        <th style="color: white">Vzdalenost</th>
                     </tr>
                 </thead>
                 <tbody>

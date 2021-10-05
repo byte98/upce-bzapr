@@ -286,4 +286,22 @@ public class Distances
             }
         }
     }
+    
+    /**
+     * Gets string containing HTML rows for table with distances from station
+     * @param origin Origin station from which distances will be displayed
+     * @return HTML rows of table with distances from station
+     */
+    public String GenerateDistancesRows(Station origin)
+    {
+        String reti = "";
+        Distance d = this.GetDistanceFromStation(origin);
+        if (d != null)
+        {
+            reti = d.GetAllDistances().entrySet().stream().filter(entry -> (entry.getKey().equals(origin) == false)).map(entry -> "<tr><td style='color: green;'>" + entry.getKey().GetAbbrevation() + "</td>" +
+                    "<td style='color: gray;'>" + entry.getKey().GetName() + "</td>" +
+                            "<td style='color: white;'>" + entry.getValue() + "&nbsp;km</td></tr>").reduce(reti, String::concat);
+        }
+        return reti;
+    }
 }

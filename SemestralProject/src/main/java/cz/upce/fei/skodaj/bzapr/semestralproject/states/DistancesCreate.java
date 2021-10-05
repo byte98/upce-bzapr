@@ -24,6 +24,8 @@ import cz.upce.fei.skodaj.bzapr.semestralproject.ui.help.HelpFactory;
 import cz.upce.fei.skodaj.bzapr.semestralproject.ui.screens.HTMLTemplateScreen;
 import cz.upce.fei.skodaj.bzapr.semestralproject.ui.screens.Screen;
 import java.awt.Color;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Class representing state of program which displays creating of table of distances
@@ -106,8 +108,41 @@ public class DistancesCreate extends State
     public void Load()
     {
         this.stations = cz.upce.fei.skodaj.bzapr.semestralproject.data.Stations.GetInstance().GetAllStations();
-        cz.upce.fei.skodaj.bzapr.semestralproject.data.Distances.GetInstance().SetAllZeroes();
+        if (this.stations.length > 1)
+        {
+            cz.upce.fei.skodaj.bzapr.semestralproject.data.Distances.GetInstance().SetAllZeroes();
+            this.origin = 0;
+            this.destination = 1;
+        }
     }
+    
+    @Override
+    public Screen GetScreen()
+    {
+        if (this.stations.length > 1)
+        {
+            Map<String, String> data = new HashMap<>();
+            data.put("stations_distances_tr", cz.upce.fei.skodaj.bzapr.semestralproject.data.Distances.GetInstance().GenerateDistancesRows(this.stations[this.origin]));
+            data.put("station_from", this.stations[this.origin].GetName());
+            data.put("station_to", this.stations[this.destination].GetName());
+            ((HTMLTemplateScreen) this.screen).SetContent(data);
+        }
+        return this.screen;
+    }
+    
+    @Override
+    public Screen GetScreen(Map<String, String> data)
+    {
+        if (this.stations.length > 1)
+        {
+            data.put("stations_distances_tr", cz.upce.fei.skodaj.bzapr.semestralproject.data.Distances.GetInstance().GenerateDistancesRows(this.stations[this.origin]));
+            data.put("station_from", this.stations[this.origin].GetName());
+            data.put("station_to", this.stations[this.destination].GetName());
+            ((HTMLTemplateScreen) this.screen).SetContent(data);
+        }
+        return this.screen;
+    }
+    
     
     @Override
     public void HandleInput(String input)
@@ -123,11 +158,55 @@ public class DistancesCreate extends State
             {
                 this.controller.ShowError("Zadane cislo nesmi byt mensi nez nula!");
             }
+            else
+            {
+                cz.upce.fei.skodaj.bzapr.semestralproject.data.Distances.GetInstance().SetDistance(
+                        this.stations[this.origin],
+                        this.stations[this.destination],
+                        value
+                );
+                this.controller.ShowSucess("Vzdalenost mezi stanicemi uspesne nastavena.");
+                
+                while (cz.upce.fei.skodaj.bzapr.semestralproject.data.Distances.GetInstance().GetDistance(
+                        this.stations[this.origin],
+                        this.stations[this.destination])
+                        > 0 && this.origin != this.destination)
+                {
+                    this.destination++;
+                    if (this.destination >= this.stations.length)
+                    {
+                        this.destination = 0;
+                        this.origin++;
+                    }
+                    if (this.origin >= this.stations.length)
+                    {
+                        this.controller.ShowSucess("Tabulka vzdalenosti byla uspesne vytvorena.");
+                        this.controller.ChangeState("distances");
+                        break;
+                    }
+                    this.controller.ReDraw();
+                }
+                if (this.destination == this.origin || (this.origin == this.stations.length - 1 && this.destination == this.stations.length - 1))
+                {
+                    this.controller.ShowSucess("Tabulka vzdalenosti byla uspesne vytvorena.");
+                    this.controller.ChangeState("distances");
+                }
+            }
         }
         else
         {
             this.controller.ShowError("Neznamy prikaz '" + input + "'!");
         }
+    }
+    
+    @Override
+    public void Control()
+    {
+      if (this.stations.length < 2)   
+      {
+          this.controller.ShowError("V systemu je prilis malo stanic!");
+          this.controller.ChangeState("distances");
+      }
     }
     
 }

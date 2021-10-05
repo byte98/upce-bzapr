@@ -142,4 +142,9 @@ public abstract class State {
      */
     public void Load(){};
     
+    /**
+     * Gets control to state
+     */
+    public void Control(){};
+    
 }

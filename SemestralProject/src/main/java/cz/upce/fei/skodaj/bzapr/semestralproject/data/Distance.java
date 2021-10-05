@@ -70,4 +70,13 @@ public class Distance
         }
         return reti;
     }
+    
+    /**
+     * Gets all distances to other stations
+     * @return All distances to other stations
+     */
+    public Map<Station, Integer> GetAllDistances()
+    {
+        return this.distances;
+    }
 }
