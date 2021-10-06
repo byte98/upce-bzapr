@@ -165,28 +165,13 @@ public class DistancesCreate extends State
                         this.stations[this.destination],
                         value
                 );
-                this.controller.ShowSucess("Vzdalenost mezi stanicemi uspesne nastavena.");
-                
-                while (cz.upce.fei.skodaj.bzapr.semestralproject.data.Distances.GetInstance().GetDistance(
-                        this.stations[this.origin],
-                        this.stations[this.destination])
-                        > 0 && this.origin != this.destination)
+                this.controller.ShowSucess("Vzdalenost mezi stanicemi uspesne nastavena.");                
+                boolean nextToSet = this.NextStationsDistance();
+                if (nextToSet == true)
                 {
-                    this.destination++;
-                    if (this.destination >= this.stations.length)
-                    {
-                        this.destination = 0;
-                        this.origin++;
-                    }
-                    if (this.origin >= this.stations.length)
-                    {
-                        this.controller.ShowSucess("Tabulka vzdalenosti byla uspesne vytvorena.");
-                        this.controller.ChangeState("distances");
-                        break;
-                    }
                     this.controller.ReDraw();
                 }
-                if (this.destination == this.origin || (this.origin == this.stations.length - 1 && this.destination == this.stations.length - 1))
+                else
                 {
                     this.controller.ShowSucess("Tabulka vzdalenosti byla uspesne vytvorena.");
                     this.controller.ChangeState("distances");
@@ -207,6 +192,34 @@ public class DistancesCreate extends State
           this.controller.ShowError("V systemu je prilis malo stanic!");
           this.controller.ChangeState("distances");
       }
+    }
+    
+    /**
+     * Gets next stations to set distance between them
+     * @return <code>TRUE</code> if there is next stations to set distance between, <code>FALSE</code> otherwise
+     */
+    private boolean NextStationsDistance()
+    {
+        boolean reti = true;
+        this.destination ++;
+        if (this.destination >= this.stations.length)
+        {
+            this.destination = 0;
+            this.origin++;
+        }
+        if (this.origin >= this.stations.length)
+        {
+            reti = false;
+        }
+        else if (this.origin == this.destination)
+        {
+            reti = this.NextStationsDistance();
+        }
+        else if (cz.upce.fei.skodaj.bzapr.semestralproject.data.Distances.GetInstance().GetDistance(this.stations[this.origin], this.stations[this.destination]) != 0)
+        {
+            reti = this.NextStationsDistance();
+        }
+        return reti;
     }
     
 }
