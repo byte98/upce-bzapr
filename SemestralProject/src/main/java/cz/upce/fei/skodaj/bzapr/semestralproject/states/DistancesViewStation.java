@@ -52,7 +52,7 @@ public class DistancesViewStation extends State
         this.strict = true;
         
         this.helps = new Help[1];
-        this.helps[0] = HelpFactory.CreateSimpleHelp("back", Color.MAGENTA, "Zrusit");
+        this.helps[0] = HelpFactory.CreateSimpleHelp("back", Color.MAGENTA, "Zpet");
     }
     
     @Override
@@ -64,6 +64,7 @@ public class DistancesViewStation extends State
            data.put("station_from", s.GetName() + " (" + s.GetAbbrevation() + ")");
            data.put("stations_distances_tr", cz.upce.fei.skodaj.bzapr.semestralproject.data.Distances.GetInstance().GenerateDistancesRows(s));
            this.origin = s;
+           this.commandPrefix = "/data/distances/view/" + s.GetAbbrevation().toLowerCase();
            ((HTMLTemplateScreen) this.screen).SetContent(data);           
        }
        return this.screen;

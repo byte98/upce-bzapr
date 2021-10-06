@@ -124,6 +124,10 @@ public class Controller {
         this.states.add(StateFactory.CreateState(this, "distances-create"));
         this.states.add(StateFactory.CreateState(this, "distances-view"));
         this.states.add(StateFactory.CreateState(this, "distances-view-station"));
+        this.states.add(StateFactory.CreateState(this, "distances-set-from"));
+        this.states.add(StateFactory.CreateState(this, "distances-set-to"));
+        this.states.add(StateFactory.CreateState(this, "distances-set-distance"));
+        this.states.add(StateFactory.CreateState(this, "distances-set"));
     }
     
     /**

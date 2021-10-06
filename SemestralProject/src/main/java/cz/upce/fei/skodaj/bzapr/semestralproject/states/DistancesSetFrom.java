@@ -28,29 +28,27 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Class representing state of program which displays distances menu
+ * Class representing state of program which displays dialog for setting distance between stations (with origin station option selected)
  * @author Jiri Skoda <jiri.skoda@student.upce.cz>
  */
-public class Distances extends State
+public class DistancesSetFrom extends State
 {
 
     /**
-     * Creates new state of program with distances menu
+     * Creates new state of program which displays dialog for setting distance between stations (with origin station option selected)
      * @param controller Controller of program
      */
-    public Distances(Controller controller)
+    public DistancesSetFrom(Controller controller)
     {
         super(controller);
-        this.commandPrefix = "/data/distances";
-        this.screen = new HTMLTemplateScreen("distances", "distances.html");
-        this.name = "distances";
-        this.strict = true;
+        this.commandPrefix = "/data/distances/set:from";
+        this.screen = new HTMLTemplateScreen("distances-set-from", "distances-set-from.html");
+        this.name = "distances-set-from";
+        this.strict = false;
         
-        this.helps = new Help[4];
-        this.helps[0] = HelpFactory.CreateSimpleHelp("create", Color.YELLOW, "Rezim vytvareni tabulky vzdalenosti");
-        this.helps[1] = HelpFactory.CreateSimpleHelp("set", Color.YELLOW, "Rezim upravy tabulky vzdalenosti");
-        this.helps[2] = HelpFactory.CreateSimpleHelp("view", Color.YELLOW, "Rezim prohlizeni tabulky vzdalenosti");
-        this.helps[3] = HelpFactory.CreateSimpleHelp("back", Color.MAGENTA, "Zpet");
+        this.helps = new Help[2];
+        this.helps[0] = HelpFactory.CreateSimpleHelp("<nazev nebo zkratka stanice>", Color.YELLOW, "Vychozi stanice pro nastaveni vzdalenosti");
+        this.helps[1] = HelpFactory.CreateSimpleHelp("cancel", Color.MAGENTA, "Zrusit");
     }
     
     @Override
@@ -65,13 +63,23 @@ public class Distances extends State
     @Override
     public void HandleInput(String input)
     {
-        switch (input.toLowerCase())
+        if (input.toLowerCase().equals("cancel"))
         {
-            case "back": this.controller.ChangeState("data"); break;
-            case "create": this.controller.ChangeState("distances-create"); break;
-            case "view": this.controller.ChangeState("distances-view"); break;
-            case "set": this.controller.ChangeState("distances-set-from"); break;
-            
+            this.controller.ChangeState("distances");
+        }
+        else
+        {
+            Station s = cz.upce.fei.skodaj.bzapr.semestralproject.data.Stations.GetInstance().GetStation(input);
+            if (s == null)
+            {
+                this.controller.ShowError("Neznama stanice '" + input + "'!");
+            }
+            else
+            {
+                Map<String, String> data = new HashMap<>();
+                data.put("station_from", s.GetAbbrevation());
+                this.controller.ChangeState("distances-set-to", data);
+            }
         }
     }
     
