@@ -17,55 +17,47 @@
  */
 package cz.upce.fei.skodaj.bzapr.semestralproject.data;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.EOFException;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 /**
- *
+ * Class representing tariff in system
  * @author Jiri Skoda <jiri.skoda@student.upce.cz>
  */
-public class Tariff
-{
+public abstract class Tariff {
+    
+    /**
+     * Type of tariff
+     */
+    private TariffType type;
+    
     /**
      * Name of tariff
      */
     private String name;
     
     /**
-     * Name of file containing tariffs data
+     * Abbreavation of tariff
      */
-    private String file;
-    
-    /**
-     * Pricelist of tariff
-     */
-    private Map<Integer, Integer> priceList;
+    private String abbr;
     
     /**
      * Creates new tariff
+     * @param type Type of tariff
      * @param name Name of tariff
-     * @param file File containing tariffs data
+     * @param abbreavation Abbreavation of tariff
      */
-    public Tariff(String name, String file)
+    public Tariff(TariffType type, String name, String abbreavation)
     {
-        this.priceList = new HashMap<>();
+        this.type = type;
         this.name = name;
-        this.file = file;
-        this.LoadTariff();
+        this.abbr = abbreavation;
+    }
+    
+    /**
+     * Gets type of tariff
+     * @return Type of tariff
+     */
+    public TariffType GetType()
+    {
+        return this.type;
     }
     
     /**
@@ -78,131 +70,19 @@ public class Tariff
     }
     
     /**
-     * Gets price for distance
-     * @param distance Distance for which will be price returned
-     * @return Price for distance
+     * Gets abbreavation of tariff
+     * @return Abbreavation of tariff
      */
-    public int GetPrice(int distance)
+    public String GetAbbr()
     {
-        int reti = 0;
-        if (this.priceList.containsKey(distance))
-        {
-            reti = this.priceList.get(distance);
-        }
-        return reti;
-    }
-    
-    
-    /**
-     * Sets price for distance
-     * @param distance Distance for which price will be set
-     * @param price Price for distance
-     */
-    public void SetPrice(int distance, int price)
-    {
-        this.priceList.put(distance, price);
-        this.SaveTariff();
+        return this.abbr;
     }
     
     /**
-     * Saves tariff to file
+     * Gets price between stations
+     * @param origin Origin station
+     * @param destination Destination station
+     * @return Price between selected stations
      */
-    private void SaveTariff()
-    {
-        // First, transform data into list
-        List<Integer> dataList = new LinkedList<>();
-        this.priceList.entrySet().stream().map(entry -> {
-            dataList.add(entry.getKey());
-            return entry;
-        }).forEachOrdered(entry -> {
-            dataList.add(entry.getValue());
-        });
-        
-        ByteArrayOutputStream baos = new ByteArrayOutputStream(dataList.size() * Integer.BYTES);
-        DataOutputStream dos = new DataOutputStream(baos);
-        Iterator<Integer> it = dataList.iterator();
-        while (it.hasNext())
-        {
-            Integer next = it.next();
-            if (next != null)
-            {
-                try
-                {
-                    dos.writeInt(next);
-                }
-                catch (IOException ex)
-                {
-                    Logger.getLogger(Tariff.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        }
-        
-        try
-        {
-            FileOutputStream fos = new FileOutputStream(this.file);
-            baos.writeTo(fos);
-            fos.flush();
-            fos.close();
-        }
-        catch (FileNotFoundException ex)
-        {
-            Logger.getLogger(Tariff.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        catch (IOException ex)
-        {
-            Logger.getLogger(Tariff.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-    }
-    
-    /**
-     * Loads tariff from file
-     */
-    private void LoadTariff()
-    {
-        try
-        {
-            List<Integer> data = new ArrayList<>();
-            FileInputStream fis = new FileInputStream(this.file);
-            DataInputStream dis = new DataInputStream(fis);
-            try
-            {
-                while (true)
-                {
-                    data.add(dis.readInt());
-                }
-            }
-            catch (EOFException ex)
-            {
-                // Transform data into array
-                Iterator<Integer> it = data.iterator();
-                int arr[] = new int[data.size()];
-                int idx = 0;
-                while (it.hasNext())
-                {
-                    arr[idx] = it.next();
-                    idx++;
-                }
-                
-                for (int i = 0; i < arr.length; i+=2)
-                {
-                    this.priceList.put(arr[i], arr[i+1]);
-                }
-                
-            }
-            catch (IOException ex)
-            {
-                Logger.getLogger(Tariff.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            dis.close();
-        }
-        catch (FileNotFoundException ex)
-        {            
-            Logger.getLogger(Tariff.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        catch (IOException ex)
-        {
-            Logger.getLogger(Tariff.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
+    public abstract int GetPrice(Station origin, Station destination);
 }

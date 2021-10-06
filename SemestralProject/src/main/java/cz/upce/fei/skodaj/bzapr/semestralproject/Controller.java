@@ -128,6 +128,7 @@ public class Controller {
         this.states.add(StateFactory.CreateState(this, "distances-set-to"));
         this.states.add(StateFactory.CreateState(this, "distances-set-distance"));
         this.states.add(StateFactory.CreateState(this, "distances-set"));
+        this.states.add(StateFactory.CreateState(this, "tariffs"));
     }
     
     /**

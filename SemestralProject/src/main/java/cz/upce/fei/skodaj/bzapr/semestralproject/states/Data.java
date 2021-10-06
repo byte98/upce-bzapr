@@ -21,6 +21,8 @@ import cz.upce.fei.skodaj.bzapr.semestralproject.Controller;
 import cz.upce.fei.skodaj.bzapr.semestralproject.data.Distances;
 import cz.upce.fei.skodaj.bzapr.semestralproject.data.Station;
 import cz.upce.fei.skodaj.bzapr.semestralproject.data.Stations;
+import cz.upce.fei.skodaj.bzapr.semestralproject.data.Tariff;
+import cz.upce.fei.skodaj.bzapr.semestralproject.data.Tariffs;
 import cz.upce.fei.skodaj.bzapr.semestralproject.ui.help.Help;
 import cz.upce.fei.skodaj.bzapr.semestralproject.ui.help.HelpFactory;
 import cz.upce.fei.skodaj.bzapr.semestralproject.ui.screens.HTMLTemplateScreen;
@@ -102,6 +104,22 @@ public class Data extends State {
         }
         data.put("distances_list", Controller.TrimString(distString, 128));
         
+        String tariffsString = new String();
+        Tariff Ts[] = Tariffs.GetInstance().GetAllTariffs();
+        while (tariffsString.length() <= 128)
+        {
+            if (Ts.length < 1)
+            {
+                break;
+            }
+            else
+            {
+                int Ti = java.util.concurrent.ThreadLocalRandom.current().nextInt(0, Ts.length);
+                tariffsString += Ts[Ti].GetName() + ", ";
+            }
+        }
+        data.put("tariffs_list", Controller.TrimString(tariffsString, 128));
+        
         ((HTMLTemplateScreen)this.screen).SetContent(data);
         return this.screen;
     }
@@ -114,6 +132,7 @@ public class Data extends State {
             case "back": this.controller.ChangeState("welcome"); break;
             case "stations": this.controller.ChangeState("stations"); break;
             case "distances": this.controller.ChangeState("distances"); break;
+            case "tariffs": this.controller.ChangeState("tariffs"); break;
         }
     }
     

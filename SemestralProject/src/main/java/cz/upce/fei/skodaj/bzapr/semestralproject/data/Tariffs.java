@@ -20,6 +20,7 @@ package cz.upce.fei.skodaj.bzapr.semestralproject.data;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 
 /**
  * Class managing all tariffs
@@ -64,6 +65,41 @@ public class Tariffs {
         return Tariffs.instance;
     }
     
+    /**
+     * Gets all tariffs available in system
+     * @return List of all tariffs available in system
+     */
+    public Tariff[] GetAllTariffs()
+    {
+        Tariff reti[] = new Tariff[this.tariffs.size()];
+        ListIterator<Tariff> it = this.tariffs.listIterator();
+        int idx = 0;
+        while (it.hasNext())
+        {
+            reti[idx] = it.next();
+            idx++;
+        }
+        return reti;
+    }
+    
+    
+    /**
+     * Generates HTML table rows to show all available tariffs
+     * @return String containing HTML table rows with all available tariffs
+     */
+    public String GenerateTariffsTableRows()
+    {
+        String reti = new String();
+        for (Tariff t: this.GetAllTariffs())
+        {
+            reti += "<tr><td>" + t.GetAbbr() + "</td><td>" + t.GetName() + "</td><td>";
+            if (t.GetType() == TariffType.DISTANCE) reti += "VZDÁLENOSTNÍ";
+            else if (t.GetType() == TariffType.ZONE) reti += "ZÓNOVÝ";
+            reti += "</td></tr>";
+                
+        }
+        return reti;
+    }
     
     
 }

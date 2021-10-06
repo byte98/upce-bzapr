@@ -55,6 +55,7 @@ public class StateFactory
             case       "distances-set-to": reti = new DistancesSetTo(controller);       break;
             case "distances-set-distance": reti = new DistancesSetDistance(controller); break;
             case          "distances-set": reti = new DistancesSet(controller);         break;
+            case                "tariffs": reti = new Tariffs(controller);              break;
         }
         return reti;
     }
