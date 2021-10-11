@@ -18,45 +18,46 @@
 package cz.upce.fei.skodaj.bzapr.semestralproject.states;
 
 import cz.upce.fei.skodaj.bzapr.semestralproject.Controller;
-import cz.upce.fei.skodaj.bzapr.semestralproject.data.Distances;
-import cz.upce.fei.skodaj.bzapr.semestralproject.data.Station;
-import cz.upce.fei.skodaj.bzapr.semestralproject.data.Stations;
-import cz.upce.fei.skodaj.bzapr.semestralproject.data.Tariff;
+import cz.upce.fei.skodaj.bzapr.semestralproject.data.ZoneTariff;
 import cz.upce.fei.skodaj.bzapr.semestralproject.ui.help.Help;
 import cz.upce.fei.skodaj.bzapr.semestralproject.ui.help.HelpFactory;
 import cz.upce.fei.skodaj.bzapr.semestralproject.ui.screens.HTMLTemplateScreen;
 import cz.upce.fei.skodaj.bzapr.semestralproject.ui.screens.Screen;
 import java.awt.Color;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 /**
- * Class representing tariffs menu
+ * Class representing creating new zone tariff (with confirmation dialog)
  * @author Jiri Skoda <jiri.skoda@student.upce.cz>
  */
-public class Tariffs extends State {
+public class TariffsZone extends State {
 
     /**
-     * Creates new tariffs menu
+     * Name of tariff
+     */
+    private String tariffName;
+    
+    /**
+     * Abbreavation of tariff
+     */
+    private String tariffAbbr;
+    
+    /**
+     * Creates new dialog for creating new zone tariff (with confirmation dialog)
      * @param controller Controller of program
      */
-    public Tariffs(Controller controller)
+    public TariffsZone(Controller controller)
     {
         super(controller);
-        this.commandPrefix = "/data/tariffs";
-        this.screen = new HTMLTemplateScreen("tariffs", "tariffs.html");
-        this.name = "tariffs";
+        this.commandPrefix = "/data/tariffs/zone?";
+        this.screen = new HTMLTemplateScreen("tariffs-zone", "tariffs-zone.html");
+        this.name = "tariffs-zone";
+        this.strict = true;
         
-        this.helps = new Help[4];
-        this.helps[0] = HelpFactory.CreateSimpleHelp("<jmeno nebo zkratka tarifu>", Color.YELLOW, "Rezim prohlizeni tarifu");
-        this.helps[1] = HelpFactory.CreateSimpleHelp("zone", Color.YELLOW, "Vytvorit novy zonovy tarif");
-        this.helps[2] = HelpFactory.CreateSimpleHelp("distance", Color.YELLOW, "Vytvorit novy vzdalenostni tarif");
-        this.helps[3] = HelpFactory.CreateSimpleHelp("back", Color.MAGENTA, "Zpet");
+        this.helps = new Help[2];
+        this.helps[0] = HelpFactory.CreateSimpleHelp("yes", Color.GREEN, "Ano, zadane udaje jsou v poradku");
+        this.helps[1] = HelpFactory.CreateSimpleHelp("no", Color.RED, "Zrusit");
     }
 
     @Override
@@ -69,15 +70,28 @@ public class Tariffs extends State {
     }
     
     @Override
+    public Screen GetScreen(Map<String, String> data)
+    {
+        data.put("tariffs_tr", cz.upce.fei.skodaj.bzapr.semestralproject.data.Tariffs.GetInstance().GenerateTariffsTableRows());
+        this.tariffName = data.get("tariff_name");
+        this.tariffAbbr = data.get("tariff_abbr");
+        ((HTMLTemplateScreen)this.screen).SetContent(data);
+        return this.screen;
+    }
+    
+    @Override
     public void HandleInput(String input)
     {
-        switch (input.toLowerCase())
+        switch(input.toLowerCase())
         {
-            case "back": this.controller.ChangeState("data"); break;
-            case "zone": this.controller.ChangeState("tariffs-zone-name"); break;
+            case "no": this.controller.ChangeState("tariffs"); break;
+            case "yes": 
+                Map<String, String> data = new HashMap<>();
+                data.put("tariff_name", this.tariffName);
+                data.put("tariff_abbr", this.tariffAbbr);
+                this.controller.ChangeState("tariffs-zone-zones", data);
+                break;
         }
     }
-
-    
     
 }

@@ -56,6 +56,10 @@ public class StateFactory
             case "distances-set-distance": reti = new DistancesSetDistance(controller); break;
             case          "distances-set": reti = new DistancesSet(controller);         break;
             case                "tariffs": reti = new Tariffs(controller);              break;
+            case      "tariffs-zone-name": reti = new TariffsZoneName(controller);      break;
+            case      "tariffs-zone-abbr": reti = new TariffsZoneAbbr(controller);      break;
+            case           "tariffs-zone": reti = new TariffsZone(controller);          break;
+            case     "tariffs-zone-zones": reti = new TariffsZoneZones(controller);     break;
         }
         return reti;
     }

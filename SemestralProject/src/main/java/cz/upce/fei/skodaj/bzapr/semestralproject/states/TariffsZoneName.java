@@ -27,36 +27,30 @@ import cz.upce.fei.skodaj.bzapr.semestralproject.ui.help.HelpFactory;
 import cz.upce.fei.skodaj.bzapr.semestralproject.ui.screens.HTMLTemplateScreen;
 import cz.upce.fei.skodaj.bzapr.semestralproject.ui.screens.Screen;
 import java.awt.Color;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 /**
- * Class representing tariffs menu
+ * Class representing creating new zone tariff (with name selected)
  * @author Jiri Skoda <jiri.skoda@student.upce.cz>
  */
-public class Tariffs extends State {
+public class TariffsZoneName extends State {
 
     /**
-     * Creates new tariffs menu
+     * Creates new dialog for creating new zone tariff (with name selected)
      * @param controller Controller of program
      */
-    public Tariffs(Controller controller)
+    public TariffsZoneName(Controller controller)
     {
         super(controller);
-        this.commandPrefix = "/data/tariffs";
-        this.screen = new HTMLTemplateScreen("tariffs", "tariffs.html");
-        this.name = "tariffs";
+        this.commandPrefix = "/data/tariffs/zone:name";
+        this.screen = new HTMLTemplateScreen("tariffs-zone-name", "tariffs-zone-name.html");
+        this.name = "tariffs-zone-name";
+        this.strict = false;
         
-        this.helps = new Help[4];
-        this.helps[0] = HelpFactory.CreateSimpleHelp("<jmeno nebo zkratka tarifu>", Color.YELLOW, "Rezim prohlizeni tarifu");
-        this.helps[1] = HelpFactory.CreateSimpleHelp("zone", Color.YELLOW, "Vytvorit novy zonovy tarif");
-        this.helps[2] = HelpFactory.CreateSimpleHelp("distance", Color.YELLOW, "Vytvorit novy vzdalenostni tarif");
-        this.helps[3] = HelpFactory.CreateSimpleHelp("back", Color.MAGENTA, "Zpet");
+        this.helps = new Help[2];
+        this.helps[0] = HelpFactory.CreateSimpleHelp("<jmeno tarifu>", Color.YELLOW, "Jmeno tarifu");
+        this.helps[1] = HelpFactory.CreateSimpleHelp("cancel", Color.MAGENTA, "Zrusit");
     }
 
     @Override
@@ -71,10 +65,23 @@ public class Tariffs extends State {
     @Override
     public void HandleInput(String input)
     {
-        switch (input.toLowerCase())
+        if (input.toLowerCase().equals("cancel"))
         {
-            case "back": this.controller.ChangeState("data"); break;
-            case "zone": this.controller.ChangeState("tariffs-zone-name"); break;
+            this.controller.ChangeState("tariffs");
+        }
+        else
+        {
+            Tariff t = cz.upce.fei.skodaj.bzapr.semestralproject.data.Tariffs.GetInstance().GetTariffByName(input);
+            if (t != null)
+            {
+                this.controller.ShowError("Tarif '" + input + "' jiz existuje!");
+            }
+            else
+            {
+                Map<String, String> data = new HashMap<>();
+                data.put("tariff_name", input);
+                this.controller.ChangeState("tariffs-zone-abbr", data);
+            }
         }
     }
 

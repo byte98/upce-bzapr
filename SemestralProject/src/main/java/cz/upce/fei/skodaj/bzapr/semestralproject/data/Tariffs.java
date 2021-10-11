@@ -18,9 +18,15 @@
 package cz.upce.fei.skodaj.bzapr.semestralproject.data;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Class managing all tariffs
@@ -50,6 +56,7 @@ public class Tariffs {
     {
         this.dataFile = new File("resources/tariffs.csv");
         this.tariffs = new ArrayList<>();
+        this.LoadTariffs();
     }
     
     /**
@@ -93,13 +100,144 @@ public class Tariffs {
         for (Tariff t: this.GetAllTariffs())
         {
             reti += "<tr><td>" + t.GetAbbr() + "</td><td>" + t.GetName() + "</td><td>";
-            if (t.GetType() == TariffType.DISTANCE) reti += "VZDÁLENOSTNÍ";
-            else if (t.GetType() == TariffType.ZONE) reti += "ZÓNOVÝ";
+            if (t.GetType() == TariffType.DISTANCE) reti += "VZDALENOSTNI";
+            else if (t.GetType() == TariffType.ZONE) reti += "ZONOVY";
             reti += "</td></tr>";
                 
         }
         return reti;
     }
     
+    /**
+     * Gets tariff by its name
+     * @param name Name of tariff
+     * @return Tariff selected by its name or <code>NULL</code> if there is not such an tariff
+     */
+    public Tariff GetTariffByName(String name)
+    {
+        Tariff reti = null;
+        ListIterator<Tariff> it = this.tariffs.listIterator();
+        while (it.hasNext())
+        {
+            Tariff t = it.next();
+            if (t != null && t.GetName().toLowerCase().equals(name))
+            {
+                reti = t;
+                break;
+            }
+        }
+        return reti;
+    }
     
+    /**
+     * Gets tariff by its abbreavation
+     * @param abbr Abbreavation of tariff
+     * @return Tariff selected by its abbreavation or <code>NULL</code> if there is not such an tariff
+     */
+    public Tariff GetTariffByAbbr(String abbr)
+    {
+        Tariff reti = null;
+        ListIterator<Tariff> it = this.tariffs.listIterator();
+        while (it.hasNext())
+        {
+            Tariff t = it.next();
+            if (t != null && t.GetAbbr().toLowerCase().equals(abbr))
+            {
+                reti = t;
+                break;
+            }
+        }
+        return reti;
+    }
+    
+    /**
+     * Gets tariff by its name or abbreavation
+     * @param nameOrAbbr Name or abbreavation of tariff
+     * @return Selected tariff or <code>NULL</code> if there is not such a tariff
+     */
+    public Tariff GetTariff(String nameOrAbbr)
+    {
+        Tariff reti = this.GetTariffByAbbr(nameOrAbbr);
+        if (reti == null)
+        {
+            reti = this.GetTariffByName(nameOrAbbr);
+        }
+        return reti;
+    }
+    
+    /**
+     * Saves tariffs to file
+     */
+    private void SaveTariffs()
+    {
+        String output = "abbr, name, type\n";
+        ListIterator<Tariff> it = this.tariffs.listIterator();
+        while (it.hasNext())
+        {
+            Tariff t = it.next();
+            if (t != null)
+            {
+                output += t.GetAbbr() + "," + t.GetName() + "," + (t.GetType() == TariffType.ZONE ? "Z" : "D");
+            }
+        }
+        try
+        {
+            FileWriter fw = new FileWriter(this.dataFile.getAbsolutePath());
+            fw.write(output);
+            fw.close();
+        }
+        catch (IOException ex)
+        {
+            Logger.getLogger(Tariffs.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }
+    
+    /**
+     * Loads tariffs from file
+     */
+    private void LoadTariffs()
+    {
+        if (this.dataFile.exists())
+        {
+            try
+            {
+                String content = new Scanner(this.dataFile).useDelimiter("\\Z").next();
+                int lineNr = 0;
+                for (String line: content.split("\n"))
+                {
+                    if (lineNr > 0)
+                    {
+                        String[] parts = line.split(",");
+                        if (parts.length >= 3)
+                        {
+                            if (parts[2].toLowerCase().equals("z"))
+                            {
+                                this.tariffs.add(new ZoneTariff(parts[1], parts[0]));
+                            }
+                            else if (parts[2].toLowerCase().equals("d"))
+                            {
+                                // TODO Implement distance tariff
+                            }
+                        }
+                    }
+                    lineNr++;
+                }
+            }
+            catch (FileNotFoundException ex)
+            {
+                Logger.getLogger(Tariffs.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    /**
+     * Adds tariff to system
+     * @param t Tariff which will be added to the system
+     */
+    public void AddTariff(Tariff t)
+    {
+        this.tariffs.add(t);
+        this.SaveTariffs();
+    }
 }

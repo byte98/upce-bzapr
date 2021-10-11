@@ -56,7 +56,12 @@ public class ZoneTariff extends Tariff{
     {
         super(TariffType.ZONE, name, abbreavation);
         this.zones = new HashMap<>();
+        for (Station s: cz.upce.fei.skodaj.bzapr.semestralproject.data.Stations.GetInstance().GetAllStations())
+        {
+            this.zones.put(s, null);
+        }
         this.ZfilePath = "resources/" + abbreavation.toLowerCase() + ".jtz";
+        this.LoadZones();
     }
 
     @Override
@@ -168,5 +173,19 @@ public class ZoneTariff extends Tariff{
     {
         this.zones.put(st, zone);
         this.SaveZones();
+    }
+    
+    /**
+     * Generates string with HTML table rows containing zone for each station
+     * @return String with HTML table rows containing zone for each station
+     */
+    public String GenerateZonesTr()
+    {
+        String reti = new String();
+        for (Station st: cz.upce.fei.skodaj.bzapr.semestralproject.data.Stations.GetInstance().GetAllStations())
+        {
+            reti += "<tr><td style='color: green;'>" + st.GetAbbrevation().toUpperCase() + "</td><td>" + st.GetName() + "</td><td style='color: white;'>" + (this.zones.get(st) == null ? "0" : this.zones.get(st)) + "</td></tr>";
+        }
+        return reti;
     }
 }
