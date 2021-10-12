@@ -43,9 +43,19 @@ public class ZoneTariff extends Tariff{
     private Map<Station, Integer> zones;
     
     /**
+     * Price list of tariff
+     */
+    private Map<Integer, Integer> prices;
+    
+    /**
      * Path to file with zones of stations
      */
     private final String ZfilePath;
+    
+    /**
+     * Path to file with prices of zones
+     */
+    private final String PfilePath;
 
     /**
      * Creates new tariff which calculates price based on zones of stations
@@ -58,16 +68,12 @@ public class ZoneTariff extends Tariff{
         this.zones = new HashMap<>();
         for (Station s: cz.upce.fei.skodaj.bzapr.semestralproject.data.Stations.GetInstance().GetAllStations())
         {
-            this.zones.put(s, null);
+            this.zones.put(s, 0);
         }
         this.ZfilePath = "resources/" + abbreavation.toLowerCase() + ".jtz";
+        this.PfilePath = "resources/" + abbreavation.toLowerCase() + ".jtp";
         this.LoadZones();
-    }
-
-    @Override
-    public int GetPrice(Station origin, Station destination)
-    {
-        return 0;
+        this.LoadPrices();
     }
     
     /**
@@ -187,5 +193,116 @@ public class ZoneTariff extends Tariff{
             reti += "<tr><td style='color: green;'>" + st.GetAbbrevation().toUpperCase() + "</td><td>" + st.GetName() + "</td><td style='color: white;'>" + (this.zones.get(st) == null ? "0" : this.zones.get(st)) + "</td></tr>";
         }
         return reti;
+    }
+
+    @Override
+    public int GetPrice(Station origin, Station destination)
+    {
+        int reti = 0;
+        int zones = Math.abs(this.zones.get(origin) - this.zones.get(destination));
+        reti = (this.prices.get(zones) == null ? 0 : this.prices.get(zones));
+        return reti;
+    }
+    
+    public void SetPrice(int zones, int price)
+    {
+        this.prices.put(zones, price);
+        this.SavePrices();
+    }
+    
+    /**
+     * Saves prices to file
+     */
+    private void SavePrices()
+    {
+        // First, save all to one big array
+        int idx = 0;
+        int output[] = new int[this.prices.size() * 2];
+        for (Integer zones: this.prices.keySet())
+        {
+            output[idx] = zones;
+            idx++;
+            output[idx] = this.prices.get(zones);
+            idx++;
+        }
+        
+        // Than, save it to file
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(output.length * Integer.BYTES);
+        DataOutputStream dos = new DataOutputStream(baos);
+        for (int val: output)
+        {
+            try
+            {
+                dos.writeInt(val);
+            }
+            catch (IOException ex)
+            {
+                Logger.getLogger(ZoneTariff.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        try
+        {
+            FileOutputStream fos = new FileOutputStream(this.PfilePath);
+            baos.writeTo(fos);
+            fos.flush();
+            fos.close();
+        }
+        catch (FileNotFoundException ex)
+        {
+            Logger.getLogger(ZoneTariff.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        catch (IOException ex)
+        {
+            Logger.getLogger(ZoneTariff.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    /**
+     * Loads prices from file
+     */
+    private void LoadPrices()
+    {
+        File in = new File (this.PfilePath);
+        int [] data;
+        if (in.exists())
+        {
+            try
+            {
+                FileInputStream fis = new FileInputStream(in);
+                BufferedInputStream bis = new BufferedInputStream(fis);
+                DataInputStream dis = new DataInputStream(bis);
+                // First, load file into array
+                int count = (int) (in.length() / Integer.BYTES);
+                data = new int[count];
+                for (int i = 0; i < count; i++)
+                {
+                    data[i] = dis.readInt();
+                }
+                int dataCount = data[0];
+                for (int i = 0; i < dataCount; i++)
+                {
+                    this.prices.put(data[i], data[i + 1]);
+                    i++;
+                }
+            }
+            catch (FileNotFoundException ex)
+            {
+                Logger.getLogger(ZoneTariff.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            catch (IOException ex)
+            {
+                Logger.getLogger(ZoneTariff.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+        }
+    }
+    
+    /**
+     * Gets all available zones of stations
+     * @return All available zones of stations
+     */
+    public Map<Station, Integer> GetAllZones()
+    {
+        return this.zones;
     }
 }

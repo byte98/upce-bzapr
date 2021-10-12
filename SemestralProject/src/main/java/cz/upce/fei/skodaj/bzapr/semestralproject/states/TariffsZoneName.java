@@ -18,9 +18,6 @@
 package cz.upce.fei.skodaj.bzapr.semestralproject.states;
 
 import cz.upce.fei.skodaj.bzapr.semestralproject.Controller;
-import cz.upce.fei.skodaj.bzapr.semestralproject.data.Distances;
-import cz.upce.fei.skodaj.bzapr.semestralproject.data.Station;
-import cz.upce.fei.skodaj.bzapr.semestralproject.data.Stations;
 import cz.upce.fei.skodaj.bzapr.semestralproject.data.Tariff;
 import cz.upce.fei.skodaj.bzapr.semestralproject.ui.help.Help;
 import cz.upce.fei.skodaj.bzapr.semestralproject.ui.help.HelpFactory;

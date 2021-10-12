@@ -310,7 +310,7 @@ public class MainWindow extends JFrame
      */
     private void HandleInput()
     {
-        String cmd = this.command.getText();
+        String cmd = this.command.getText().trim();
         
         SimpleAttributeSet def = new SimpleAttributeSet();
         StyleConstants.setItalic(def, false);

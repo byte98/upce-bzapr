@@ -60,6 +60,7 @@ public class StateFactory
             case      "tariffs-zone-abbr": reti = new TariffsZoneAbbr(controller);      break;
             case           "tariffs-zone": reti = new TariffsZone(controller);          break;
             case     "tariffs-zone-zones": reti = new TariffsZoneZones(controller);     break;
+            case    "tariffs-zone-prices": reti = new TariffsZonePrices(controller);    break;
         }
         return reti;
     }

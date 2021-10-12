@@ -120,7 +120,7 @@ public class Tariffs {
         while (it.hasNext())
         {
             Tariff t = it.next();
-            if (t != null && t.GetName().toLowerCase().equals(name))
+            if (t != null && t.GetName().toLowerCase().equals(name.toLowerCase()))
             {
                 reti = t;
                 break;
@@ -141,7 +141,7 @@ public class Tariffs {
         while (it.hasNext())
         {
             Tariff t = it.next();
-            if (t != null && t.GetAbbr().toLowerCase().equals(abbr))
+            if (t != null && t.GetAbbr().toLowerCase().equals(abbr.toLowerCase()))
             {
                 reti = t;
                 break;
