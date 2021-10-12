@@ -17,6 +17,7 @@
  */
 package cz.upce.fei.skodaj.bzapr.semestralproject.data;
 
+import cz.upce.fei.skodaj.bzapr.semestralproject.Controller;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -66,6 +67,7 @@ public class ZoneTariff extends Tariff{
     {
         super(TariffType.ZONE, name, abbreavation);
         this.zones = new HashMap<>();
+        this.prices = new HashMap<>();
         for (Station s: cz.upce.fei.skodaj.bzapr.semestralproject.data.Stations.GetInstance().GetAllStations())
         {
             this.zones.put(s, 0);
@@ -155,7 +157,9 @@ public class ZoneTariff extends Tariff{
                 int dataCount = data[0];
                 for (int i = 0; i < dataCount; i++)
                 {
-                    this.zones.put(Stations.GetInstance().GetStation(data[i] + 1), data[i + 1 + dataCount]);
+                    Station s = Stations.GetInstance().GetStation(data[i + 1]);
+                    int zone = data[i + 1 + dataCount];
+                    this.zones.put(s, zone);
                 }
             }
             catch (FileNotFoundException ex)
@@ -278,12 +282,14 @@ public class ZoneTariff extends Tariff{
                 {
                     data[i] = dis.readInt();
                 }
-                int dataCount = data[0];
-                for (int i = 0; i < dataCount; i++)
+                for (int i = 0; i < data.length; i++)
                 {
                     this.prices.put(data[i], data[i + 1]);
                     i++;
                 }
+                dis.close();
+                bis.close();
+                fis.close();
             }
             catch (FileNotFoundException ex)
             {
@@ -304,5 +310,29 @@ public class ZoneTariff extends Tariff{
     public Map<Station, Integer> GetAllZones()
     {
         return this.zones;
+    }
+    
+    /**
+     * Gets all available prices of zones
+     * @return All available prices of zones
+     */
+    public Map<Integer, Integer> GetAllPrices()
+    {
+        return this.prices;
+    }
+    
+    @Override
+    public void Delete()
+    {
+        File zFile = new File(this.ZfilePath);
+        if (zFile.exists())
+        {
+            zFile.delete();
+        }
+        File pFile = new File(this.PfilePath);
+        if (pFile.exists())
+        {
+            pFile.delete();
+        }
     }
 }

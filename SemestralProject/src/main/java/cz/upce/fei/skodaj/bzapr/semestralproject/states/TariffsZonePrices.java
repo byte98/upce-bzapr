@@ -18,7 +18,6 @@
 package cz.upce.fei.skodaj.bzapr.semestralproject.states;
 
 import cz.upce.fei.skodaj.bzapr.semestralproject.Controller;
-import cz.upce.fei.skodaj.bzapr.semestralproject.data.Station;
 import cz.upce.fei.skodaj.bzapr.semestralproject.data.ZoneTariff;
 import cz.upce.fei.skodaj.bzapr.semestralproject.ui.help.Help;
 import cz.upce.fei.skodaj.bzapr.semestralproject.ui.help.HelpFactory;
@@ -72,6 +71,7 @@ public class TariffsZonePrices extends State {
         Map<String, String> data = new HashMap<>();
         data.put("zones_count", Integer.toString(this.actZone));
         data.put("tariff_name", this.tariff.GetName());
+        data.put("zones_prices", this.GetZonePrices());
         ((HTMLTemplateScreen)this.screen).SetContent(data);
         return this.screen;
     }
@@ -108,6 +108,7 @@ public class TariffsZonePrices extends State {
         
         data.put("zones_count", Integer.toString(this.actZone));
         data.put("tariff_name", this.tariff.GetName());
+        data.put("zones_prices", this.GetZonePrices());
         ((HTMLTemplateScreen)this.screen).SetContent(data);
         return this.screen;
     }
@@ -162,11 +163,11 @@ public class TariffsZonePrices extends State {
             if (price >= 0)
             {
                 this.tariff.SetPrice(this.actZone, price);
-                this.controller.ShowSucess("Cena pro " + this.actZone + "' byla nastavene.");
+                this.controller.ShowSucess("Cena pro " + this.actZone + " zony byla nastavena.");
                 this.actZone++;
                 if (this.actZone > this.maxZone)
                 {
-                    this.controller.ShowSucess("Zony pro veschny stanice byly uspesne nastaveny!");
+                    this.controller.ShowSucess("Ceny pro vsechny zony byly uspesne nastaveny!");
                     this.controller.ChangeState("tariffs");
                 }
                 else
@@ -185,4 +186,20 @@ public class TariffsZonePrices extends State {
         }
     }
     
+    /**
+     * Gets HTML table rows with zone prices
+     * @return String with HTML table rows with zone prices
+     */
+    private String GetZonePrices()
+    {
+        String reti = new String();
+        
+        for (int i = 0; i <= this.maxZone; i++)
+        {
+            reti += "<tr><td>" + i + "</td><td style='color: white;'>";
+            reti += (this.tariff.GetAllPrices().get(i) == null ? " " : this.tariff.GetAllPrices().get(i) + " Kc");
+            reti += "</td></tr>";
+        }
+        return reti;
+    }
 }

@@ -18,21 +18,14 @@
 package cz.upce.fei.skodaj.bzapr.semestralproject.states;
 
 import cz.upce.fei.skodaj.bzapr.semestralproject.Controller;
-import cz.upce.fei.skodaj.bzapr.semestralproject.data.Distances;
-import cz.upce.fei.skodaj.bzapr.semestralproject.data.Station;
-import cz.upce.fei.skodaj.bzapr.semestralproject.data.Stations;
 import cz.upce.fei.skodaj.bzapr.semestralproject.data.Tariff;
+import cz.upce.fei.skodaj.bzapr.semestralproject.data.TariffType;
 import cz.upce.fei.skodaj.bzapr.semestralproject.ui.help.Help;
 import cz.upce.fei.skodaj.bzapr.semestralproject.ui.help.HelpFactory;
 import cz.upce.fei.skodaj.bzapr.semestralproject.ui.screens.HTMLTemplateScreen;
 import cz.upce.fei.skodaj.bzapr.semestralproject.ui.screens.Screen;
 import java.awt.Color;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -51,6 +44,7 @@ public class Tariffs extends State {
         this.commandPrefix = "/data/tariffs";
         this.screen = new HTMLTemplateScreen("tariffs", "tariffs.html");
         this.name = "tariffs";
+        this.strict = false;
         
         this.helps = new Help[4];
         this.helps[0] = HelpFactory.CreateSimpleHelp("<jmeno nebo zkratka tarifu>", Color.YELLOW, "Rezim prohlizeni tarifu");
@@ -73,8 +67,28 @@ public class Tariffs extends State {
     {
         switch (input.toLowerCase())
         {
-            case "back": this.controller.ChangeState("data"); break;
-            case "zone": this.controller.ChangeState("tariffs-zone-name"); break;
+            case "back":
+                this.controller.ChangeState("data");
+                break;
+            case "zone":
+                this.controller.ChangeState("tariffs-zone-name");
+                break;
+            default:
+                Tariff t = cz.upce.fei.skodaj.bzapr.semestralproject.data.Tariffs.GetInstance().GetTariff(input);
+                if (t == null)
+                {
+                    this.controller.ShowError("Neznamy prikaz '" + input + "'!");
+                }
+                else
+                {
+                    Map<String, String> data = new HashMap<>();
+                    data.put("tariff_abbr", t.GetAbbr());
+                    if (t.GetType() == TariffType.ZONE)
+                    {
+                        this.controller.ChangeState("tariffs-zone-view", data);
+                    }                    
+                }
+                break;
         }
     }
 

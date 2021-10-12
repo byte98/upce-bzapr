@@ -134,6 +134,8 @@ public class Controller {
         this.states.add(StateFactory.CreateState(this, "tariffs-zone"));
         this.states.add(StateFactory.CreateState(this, "tariffs-zone-zones"));
         this.states.add(StateFactory.CreateState(this, "tariffs-zone-prices"));
+        this.states.add(StateFactory.CreateState(this, "tariffs-zone-view"));
+        this.states.add(StateFactory.CreateState(this, "tariffs-zone-delete"));
     }
     
     /**

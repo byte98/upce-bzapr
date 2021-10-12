@@ -99,7 +99,7 @@ public class Tariffs {
         String reti = new String();
         for (Tariff t: this.GetAllTariffs())
         {
-            reti += "<tr><td>" + t.GetAbbr() + "</td><td>" + t.GetName() + "</td><td>";
+            reti += "<tr><td style='color: blue;'>" + t.GetAbbr() + "</td><td>" + t.GetName() + "</td><td  style='color: green;'>";
             if (t.GetType() == TariffType.DISTANCE) reti += "VZDALENOSTNI";
             else if (t.GetType() == TariffType.ZONE) reti += "ZONOVY";
             reti += "</td></tr>";
@@ -238,6 +238,17 @@ public class Tariffs {
     public void AddTariff(Tariff t)
     {
         this.tariffs.add(t);
+        this.SaveTariffs();
+    }
+    
+    /**
+     * Removes tariff from system
+     * @param t Tariff which will be removed from system
+     */
+    public void RemoveTariff(Tariff t)
+    {
+        t.Delete();
+        this.tariffs.remove(t);
         this.SaveTariffs();
     }
 }

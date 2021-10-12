@@ -85,4 +85,9 @@ public abstract class Tariff {
      * @return Price between selected stations
      */
     public abstract int GetPrice(Station origin, Station destination);
+    
+    /**
+     * Deletes tariff
+     */
+    public abstract void Delete();
 }
