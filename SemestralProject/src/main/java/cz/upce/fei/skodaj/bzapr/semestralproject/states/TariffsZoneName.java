@@ -68,7 +68,7 @@ public class TariffsZoneName extends State {
         }
         else
         {
-            Tariff t = cz.upce.fei.skodaj.bzapr.semestralproject.data.Tariffs.GetInstance().GetTariffByName(input);
+            Tariff t = cz.upce.fei.skodaj.bzapr.semestralproject.data.Tariffs.GetInstance().GetTariff(input);
             if (t != null)
             {
                 this.controller.ShowError("Tarif '" + input + "' jiz existuje!");

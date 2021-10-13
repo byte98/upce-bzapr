@@ -73,9 +73,16 @@ public class Tariffs extends State {
             case "zone":
                 this.controller.ChangeState("tariffs-zone-name");
                 break;
+            case "distance":
+                this.controller.ChangeState("tariffs-dist-name");
+                break;
             default:
                 Tariff t = cz.upce.fei.skodaj.bzapr.semestralproject.data.Tariffs.GetInstance().GetTariff(input);
-                if (t == null)
+                if (input.equals(""))
+                {
+                    //pass
+                }
+                else if (t == null)
                 {
                     this.controller.ShowError("Neznamy prikaz '" + input + "'!");
                 }
@@ -86,7 +93,11 @@ public class Tariffs extends State {
                     if (t.GetType() == TariffType.ZONE)
                     {
                         this.controller.ChangeState("tariffs-zone-view", data);
-                    }                    
+                    }   
+                    else if (t.GetType() == TariffType.DISTANCE)
+                    {
+                        this.controller.ChangeState("tariffs-dist-view", data);
+                    }
                 }
                 break;
         }

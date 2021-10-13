@@ -28,10 +28,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Class representing creating new zone tariff (with abbreavation selected)
+ * Class representing creating new distance tariff (with abbreavation selected)
  * @author Jiri Skoda <jiri.skoda@student.upce.cz>
  */
-public class TariffsZoneAbbr extends State {
+public class TariffsDistAbbr extends State {
 
     /**
      * Name of tariff
@@ -39,15 +39,15 @@ public class TariffsZoneAbbr extends State {
     private String tariffName;
     
     /**
-     * Creates new dialog for creating new zone tariff (with abbreavation selected)
+     * Creates new dialog for creating new distance tariff (with abbreavation selected)
      * @param controller Controller of program
      */
-    public TariffsZoneAbbr(Controller controller)
+    public TariffsDistAbbr(Controller controller)
     {
         super(controller);
-        this.commandPrefix = "/data/tariffs/zone:abbr";
-        this.screen = new HTMLTemplateScreen("tariffs-zone-abbr", "tariffs-zone-abbr.html");
-        this.name = "tariffs-zone-abbr";
+        this.commandPrefix = "/data/tariffs/distance:abbr";
+        this.screen = new HTMLTemplateScreen("tariffs-dist-abbr", "tariffs-dist-abbr.html");
+        this.name = "tariffs-dist-abbr";
         this.strict = false;
         
         this.helps = new Help[2];
@@ -92,7 +92,7 @@ public class TariffsZoneAbbr extends State {
                 Map<String, String> data = new HashMap<>();
                 data.put("tariff_abbr", input);
                 data.put("tariff_name", this.tariffName);
-                this.controller.ChangeState("tariffs-zone", data);
+                this.controller.ChangeState("tariffs-dist", data);
             }
         }
     }

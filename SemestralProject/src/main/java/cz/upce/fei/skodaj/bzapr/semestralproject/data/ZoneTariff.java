@@ -120,6 +120,8 @@ public class ZoneTariff extends Tariff{
             baos.writeTo(fos);
             fos.flush();
             fos.close();
+            dos.close();
+            baos.close();
         }
         catch (FileNotFoundException ex)
         {
@@ -161,6 +163,9 @@ public class ZoneTariff extends Tariff{
                     int zone = data[i + 1 + dataCount];
                     this.zones.put(s, zone);
                 }
+                fis.close();
+                bis.close();
+                dis.close();
             }
             catch (FileNotFoundException ex)
             {
@@ -203,11 +208,16 @@ public class ZoneTariff extends Tariff{
     public int GetPrice(Station origin, Station destination)
     {
         int reti = 0;
-        int zones = Math.abs(this.zones.get(origin) - this.zones.get(destination));
-        reti = (this.prices.get(zones) == null ? 0 : this.prices.get(zones));
+        int z = Math.abs(this.zones.get(origin) - this.zones.get(destination));
+        reti = (this.prices.get(z) == null ? 0 : this.prices.get(z));
         return reti;
     }
     
+    /**
+     * Sets price of tariff for zones
+     * @param zones Zones passed by passenger to which price will be assigned to 
+     * @param price Price for passed zones
+     */
     public void SetPrice(int zones, int price)
     {
         this.prices.put(zones, price);
@@ -250,6 +260,8 @@ public class ZoneTariff extends Tariff{
             baos.writeTo(fos);
             fos.flush();
             fos.close();
+            dos.close();
+            baos.close();
         }
         catch (FileNotFoundException ex)
         {

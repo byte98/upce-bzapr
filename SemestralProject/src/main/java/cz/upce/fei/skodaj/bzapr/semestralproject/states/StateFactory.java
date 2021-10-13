@@ -63,6 +63,12 @@ public class StateFactory
             case    "tariffs-zone-prices": reti = new TariffsZonePrices(controller);    break;
             case      "tariffs-zone-view": reti = new TariffsZoneView(controller);      break;
             case    "tariffs-zone-delete": reti = new TariffsZoneDelete(controller);    break;
+            case      "tariffs-dist-name": reti = new TariffsDistName(controller);      break;
+            case      "tariffs-dist-abbr": reti = new TariffsDistAbbr(controller);      break;
+            case           "tariffs-dist": reti = new TariffsDist(controller);          break;
+            case    "tariffs-dist-prices": reti = new TariffsDistPrices(controller);    break;
+            case      "tariffs-dist-view": reti = new TariffsDistView(controller);      break;
+            case    "tariffs-dist-delete": reti = new TariffsDistDelete(controller);    break;
         }
         return reti;
     }

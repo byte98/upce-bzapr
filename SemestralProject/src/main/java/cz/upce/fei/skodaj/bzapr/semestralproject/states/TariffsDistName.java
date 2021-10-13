@@ -28,30 +28,25 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Class representing creating new zone tariff (with abbreavation selected)
+ * Class representing creating new distance tariff (with name selected)
  * @author Jiri Skoda <jiri.skoda@student.upce.cz>
  */
-public class TariffsZoneAbbr extends State {
+public class TariffsDistName extends State {
 
     /**
-     * Name of tariff
-     */
-    private String tariffName;
-    
-    /**
-     * Creates new dialog for creating new zone tariff (with abbreavation selected)
+     * Creates new dialog for creating new distance tariff (with name selected)
      * @param controller Controller of program
      */
-    public TariffsZoneAbbr(Controller controller)
+    public TariffsDistName(Controller controller)
     {
         super(controller);
-        this.commandPrefix = "/data/tariffs/zone:abbr";
-        this.screen = new HTMLTemplateScreen("tariffs-zone-abbr", "tariffs-zone-abbr.html");
-        this.name = "tariffs-zone-abbr";
+        this.commandPrefix = "/data/tariffs/distance:name";
+        this.screen = new HTMLTemplateScreen("tariffs-dist-name", "tariffs-dist-name.html");
+        this.name = "tariffs-dist-name";
         this.strict = false;
         
         this.helps = new Help[2];
-        this.helps[0] = HelpFactory.CreateSimpleHelp("<zkratka tarifu>", Color.YELLOW, "Zkratka tarifu");
+        this.helps[0] = HelpFactory.CreateSimpleHelp("<jmeno tarifu>", Color.YELLOW, "Jmeno tarifu");
         this.helps[1] = HelpFactory.CreateSimpleHelp("cancel", Color.MAGENTA, "Zrusit");
     }
 
@@ -60,15 +55,6 @@ public class TariffsZoneAbbr extends State {
     {
         Map<String, String> data = new HashMap<>();
         data.put("tariffs_tr", cz.upce.fei.skodaj.bzapr.semestralproject.data.Tariffs.GetInstance().GenerateTariffsTableRows());
-        ((HTMLTemplateScreen)this.screen).SetContent(data);
-        return this.screen;
-    }
-    
-    @Override
-    public Screen GetScreen(Map<String, String> data)
-    {
-        data.put("tariffs_tr", cz.upce.fei.skodaj.bzapr.semestralproject.data.Tariffs.GetInstance().GenerateTariffsTableRows());
-        this.tariffName = data.get("tariff_name");
         ((HTMLTemplateScreen)this.screen).SetContent(data);
         return this.screen;
     }
@@ -90,9 +76,8 @@ public class TariffsZoneAbbr extends State {
             else
             {
                 Map<String, String> data = new HashMap<>();
-                data.put("tariff_abbr", input);
-                data.put("tariff_name", this.tariffName);
-                this.controller.ChangeState("tariffs-zone", data);
+                data.put("tariff_name", input);
+                this.controller.ChangeState("tariffs-dist-abbr", data);
             }
         }
     }

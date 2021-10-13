@@ -18,6 +18,7 @@
 package cz.upce.fei.skodaj.bzapr.semestralproject.states;
 
 import cz.upce.fei.skodaj.bzapr.semestralproject.Controller;
+import cz.upce.fei.skodaj.bzapr.semestralproject.data.DistanceTariff;
 import cz.upce.fei.skodaj.bzapr.semestralproject.data.Station;
 import cz.upce.fei.skodaj.bzapr.semestralproject.data.ZoneTariff;
 import cz.upce.fei.skodaj.bzapr.semestralproject.ui.help.Help;
@@ -29,58 +30,55 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Class representing creating new zone tariff (with setting zones to stations)
+ * Class representing creating new distance tariff (with setting prices to distances)
  * @author Jiri Skoda <jiri.skoda@student.upce.cz>
  */
-public class TariffsZoneZones extends State {
+public class TariffsDistPrices extends State {
 
     /**
      * Tariff which will be edited
      */
-    private ZoneTariff tariff;
+    private DistanceTariff tariff;
     
     /**
-     * Array with all available stations
+     * Actually selected distance
      */
-    private Station[] stations;
+    private int actDistance = 0;
     
     /**
-     * Index of actually selected station
+     * Maximal selected distance
      */
-    private int stIdx;
+    private int maxDistance = 0;
     
     /**
-     * Creates new dialog for creating new zone tariff (with setting zones to stations)
+     * Minimal selected distance
+     */
+    private int minDistance = 0;
+    
+    /**
+     * Creates new dialog for creating new distance tariff (with setting prices to distances)
      * @param controller Controller of program
      */
-    public TariffsZoneZones(Controller controller)
+    public TariffsDistPrices(Controller controller)
     {
         super(controller);
         this.commandPrefix = "/data/tariffs/";
-        this.screen = new HTMLTemplateScreen("tariffs-zone-zones", "tariffs-zone-zones.html");
-        this.name = "tariffs-zone-zones";
+        this.screen = new HTMLTemplateScreen("tariffs-dist-prices", "tariffs-dist-prices.html");
+        this.name = "tariffs-dist-prices";
         this.strict = false;
         
         this.helps = new Help[2];
-        this.helps[0] = HelpFactory.CreateSimpleHelp("<cele cislo>", Color.YELLOW, "Cislo zony pro stanici");
+        this.helps[0] = HelpFactory.CreateSimpleHelp("<cele cislo>", Color.YELLOW, "Cena za projetou vzdalenost");
         this.helps[1] = HelpFactory.CreateSimpleHelp("cancel", Color.MAGENTA, "Zrusit");
-    }
-
-    @Override
-    public void Load()
-    {
-        this.stations = cz.upce.fei.skodaj.bzapr.semestralproject.data.Stations.GetInstance().GetAllStations();
-        this.stIdx = 0;
     }
     
     @Override
     public Screen GetScreen()
     {
         Map<String, String> data = new HashMap<>();
-        data.put("tariff_zones", this.tariff.GenerateZonesTr());
+        data.put("distance_act", Integer.toString(this.actDistance));
         data.put("tariff_name", this.tariff.GetName());
-        data.put("station_name", this.stations[this.stIdx].GetName());
-        data.put("station_abbr", this.stations[this.stIdx].GetAbbrevation());
+        data.put("distance_prices", this.tariff.GeneratePriceListRows(this.minDistance, this.maxDistance));
         ((HTMLTemplateScreen)this.screen).SetContent(data);
         return this.screen;
     }
@@ -88,12 +86,42 @@ public class TariffsZoneZones extends State {
     @Override
     public Screen GetScreen(Map<String, String> data)
     {
-        this.tariff = new ZoneTariff(data.get("tariff_name"), data.get("tariff_abbr"));
-        this.commandPrefix = "/data/tariffs/zone/" + data.get("tariff_abbr").toLowerCase();
-        data.put("tariff_zones", this.tariff.GenerateZonesTr());
-        data.put("station_name", this.stations[this.stIdx].GetName());
-        data.put("station_abbr", this.stations[this.stIdx].GetAbbrevation());
+        if (this.tariff == null)
+        {
+            this.tariff = (DistanceTariff) cz.upce.fei.skodaj.bzapr.semestralproject.data.Tariffs.GetInstance().GetTariff(data.get("tariff_abbr"));
+            this.commandPrefix = "/data/tariffs/zone/" + data.get("tariff_abbr").toLowerCase();
+            int min = -1, max = -1;
+            for (Station from: cz.upce.fei.skodaj.bzapr.semestralproject.data.Stations.GetInstance().GetAllStations())
+            {
+                for (Station to: cz.upce.fei.skodaj.bzapr.semestralproject.data.Stations.GetInstance().GetAllStations())
+                {
+                    int distance = cz.upce.fei.skodaj.bzapr.semestralproject.data.Distances.GetInstance().GetDistance(from, to);
+                    if (min == -1)
+                    {
+                        min = distance;
+                    }
+                    if (max == -1)
+                    {
+                        max = distance;
+                    }
+                    if (distance < min)
+                    {
+                        min = distance;
+                    }
+                    if (distance > max)
+                    {
+                        max = distance;
+                    }
+                }
+            }
+            this.minDistance = min;
+            this.maxDistance = max;
+            this.actDistance = this.minDistance;
+        }
+        
+        data.put("distance_act", Integer.toString(this.actDistance));
         data.put("tariff_name", this.tariff.GetName());
+        data.put("distance_prices", this.tariff.GeneratePriceListRows(this.minDistance, this.maxDistance));
         ((HTMLTemplateScreen)this.screen).SetContent(data);
         return this.screen;
     }
@@ -144,28 +172,23 @@ public class TariffsZoneZones extends State {
         }
         else if (this.CheckInt(input))
         {
-            int zone = Integer.parseInt(input);
-            if (zone > 0)
+            int price = Integer.parseInt(input);
+            if (price >= 0)
             {
-                this.tariff.SetZone(this.stations[this.stIdx], zone);
-                this.controller.ShowSucess("Zona pro stanici '" + this.stations[this.stIdx].GetName() + "' byla nastavene.");
-                this.stIdx++;
-                if (this.stIdx >= this.stations.length)
+                this.tariff.SetPrice(this.actDistance, Integer.parseInt(input));
+                this.controller.ShowSucess("Cena pro vzdalenost " + this.actDistance + " km nastavena.");
+                this.actDistance++;
+                this.controller.ReDraw();
+                if (this.actDistance > this.maxDistance)
                 {
-                    cz.upce.fei.skodaj.bzapr.semestralproject.data.Tariffs.GetInstance().AddTariff(this.tariff);
-                    this.controller.ShowSucess("Zony pro veschny stanice byly uspesne nastaveny!");
-                    Map<String, String> data = new HashMap<>();
-                    data.put("tariff_abbr", this.tariff.GetAbbr());
-                    this.controller.ChangeState("tariffs-zone-prices", data);
+                    this.controller.ShowSucess("Cenik tarifu '" + this.tariff.GetName() + "' byl uspesne vytvoren.");
+                    this.controller.ChangeState("tariffs");
                 }
-                else
-                {
-                    this.controller.ReDraw();
-                }
+                
             }
             else
             {
-                this.controller.ShowError("Cislo zony musi byt kladne cislo!");
+                this.controller.ShowError("Cislo zony musi byt nezaporne cislo!");
             }
         }
         else
@@ -173,5 +196,4 @@ public class TariffsZoneZones extends State {
             this.controller.ShowError("Neznamy prikaz '" + input + "'!");
         }
     }
-    
 }

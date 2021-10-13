@@ -18,7 +18,8 @@
 package cz.upce.fei.skodaj.bzapr.semestralproject.states;
 
 import cz.upce.fei.skodaj.bzapr.semestralproject.Controller;
-import cz.upce.fei.skodaj.bzapr.semestralproject.data.Tariff;
+import cz.upce.fei.skodaj.bzapr.semestralproject.data.DistanceTariff;
+import cz.upce.fei.skodaj.bzapr.semestralproject.data.ZoneTariff;
 import cz.upce.fei.skodaj.bzapr.semestralproject.ui.help.Help;
 import cz.upce.fei.skodaj.bzapr.semestralproject.ui.help.HelpFactory;
 import cz.upce.fei.skodaj.bzapr.semestralproject.ui.screens.HTMLTemplateScreen;
@@ -28,10 +29,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Class representing creating new zone tariff (with abbreavation selected)
+ * Class representing creating new distance tariff (with confirmation dialog)
  * @author Jiri Skoda <jiri.skoda@student.upce.cz>
  */
-public class TariffsZoneAbbr extends State {
+public class TariffsDist extends State {
 
     /**
      * Name of tariff
@@ -39,20 +40,25 @@ public class TariffsZoneAbbr extends State {
     private String tariffName;
     
     /**
-     * Creates new dialog for creating new zone tariff (with abbreavation selected)
+     * Abbreavation of tariff
+     */
+    private String tariffAbbr;
+    
+    /**
+     * Creates new dialog for creating new distance tariff (with confirmation dialog)
      * @param controller Controller of program
      */
-    public TariffsZoneAbbr(Controller controller)
+    public TariffsDist(Controller controller)
     {
         super(controller);
-        this.commandPrefix = "/data/tariffs/zone:abbr";
-        this.screen = new HTMLTemplateScreen("tariffs-zone-abbr", "tariffs-zone-abbr.html");
-        this.name = "tariffs-zone-abbr";
-        this.strict = false;
+        this.commandPrefix = "/data/tariffs/distance?";
+        this.screen = new HTMLTemplateScreen("tariffs-dist", "tariffs-dist.html");
+        this.name = "tariffs-dist";
+        this.strict = true;
         
         this.helps = new Help[2];
-        this.helps[0] = HelpFactory.CreateSimpleHelp("<zkratka tarifu>", Color.YELLOW, "Zkratka tarifu");
-        this.helps[1] = HelpFactory.CreateSimpleHelp("cancel", Color.MAGENTA, "Zrusit");
+        this.helps[0] = HelpFactory.CreateSimpleHelp("yes", Color.GREEN, "Ano, zadane udaje jsou v poradku");
+        this.helps[1] = HelpFactory.CreateSimpleHelp("no", Color.RED, "Zrusit");
     }
 
     @Override
@@ -69,6 +75,7 @@ public class TariffsZoneAbbr extends State {
     {
         data.put("tariffs_tr", cz.upce.fei.skodaj.bzapr.semestralproject.data.Tariffs.GetInstance().GenerateTariffsTableRows());
         this.tariffName = data.get("tariff_name");
+        this.tariffAbbr = data.get("tariff_abbr");
         ((HTMLTemplateScreen)this.screen).SetContent(data);
         return this.screen;
     }
@@ -76,27 +83,17 @@ public class TariffsZoneAbbr extends State {
     @Override
     public void HandleInput(String input)
     {
-        if (input.toLowerCase().equals("cancel"))
+        switch(input.toLowerCase())
         {
-            this.controller.ChangeState("tariffs");
-        }
-        else
-        {
-            Tariff t = cz.upce.fei.skodaj.bzapr.semestralproject.data.Tariffs.GetInstance().GetTariff(input);
-            if (t != null)
-            {
-                this.controller.ShowError("Tarif '" + input + "' jiz existuje!");
-            }
-            else
-            {
+            case "no": this.controller.ChangeState("tariffs"); break;
+            case "yes": 
                 Map<String, String> data = new HashMap<>();
-                data.put("tariff_abbr", input);
                 data.put("tariff_name", this.tariffName);
-                this.controller.ChangeState("tariffs-zone", data);
-            }
+                data.put("tariff_abbr", this.tariffAbbr);
+                cz.upce.fei.skodaj.bzapr.semestralproject.data.Tariffs.GetInstance().AddTariff(new DistanceTariff(this.tariffName, this.tariffAbbr));
+                this.controller.ChangeState("tariffs-dist-prices", data);
+                break;
         }
     }
-
-    
     
 }

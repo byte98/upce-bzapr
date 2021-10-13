@@ -177,7 +177,7 @@ public class Tariffs {
             Tariff t = it.next();
             if (t != null)
             {
-                output += t.GetAbbr() + "," + t.GetName() + "," + (t.GetType() == TariffType.ZONE ? "Z" : "D");
+                output += t.GetAbbr() + "," + t.GetName() + "," + (t.GetType() == TariffType.ZONE ? "Z" : "D") + "\n";
             }
         }
         try
@@ -217,7 +217,7 @@ public class Tariffs {
                             }
                             else if (parts[2].toLowerCase().equals("d"))
                             {
-                                // TODO Implement distance tariff
+                                this.tariffs.add(new DistanceTariff(parts[1], parts[0]));
                             }
                         }
                     }
