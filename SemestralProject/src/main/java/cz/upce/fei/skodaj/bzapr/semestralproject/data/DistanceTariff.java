@@ -55,7 +55,7 @@ public class DistanceTariff extends Tariff {
     public DistanceTariff(String name, String abbreavation)
     {
         super(TariffType.DISTANCE, name, abbreavation);
-        this.PfilePath = "resources/" + this.GetAbbr().toLowerCase() + ".jtp";
+        this.PfilePath = "resources/data/" + this.GetAbbr().toLowerCase() + ".jtp";
         this.priceList = new HashMap<>();
         this.LoadPrices();
     }

@@ -54,7 +54,7 @@ public class Tariffs {
      */
     private Tariffs()
     {
-        this.dataFile = new File("resources/tariffs.csv");
+        this.dataFile = new File("resources/data/tariffs.csv");
         this.tariffs = new ArrayList<>();
         this.LoadTariffs();
     }

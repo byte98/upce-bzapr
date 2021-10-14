@@ -42,7 +42,7 @@ public class Welcome extends State
         this.name = "welcome";
         
         this.helps = new Help[3];
-        this.helps[0] = HelpFactory.CreateSimpleHelp("sale", Color.YELLOW, "Rezim prodeje");
+        this.helps[0] = HelpFactory.CreateSimpleHelp("ticket", Color.YELLOW, "Rezim prodeje");
         this.helps[1] = HelpFactory.CreateSimpleHelp("data", Color.YELLOW, "Rezim upravy dat");
         this.helps[2] = HelpFactory.CreateSimpleHelp("exit", Color.MAGENTA, "Ukoncit program");
     }
@@ -56,7 +56,10 @@ public class Welcome extends State
         {
             case "exit": this.controller.ChangeState("exit"); break;
             case "data": this.controller.ChangeState("data"); break;
-            case "sale": this.controller.ShowTariffsHelp(); break;
+            case "ticket":
+                this.controller.ShowTariffsHelp();
+                this.controller.ChangeState("ticket");
+                break;
         }
     }
     

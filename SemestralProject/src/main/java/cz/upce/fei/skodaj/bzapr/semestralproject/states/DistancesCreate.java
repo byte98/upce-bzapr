@@ -219,6 +219,11 @@ public class DistancesCreate extends State
         {
             reti = this.NextStationsDistance();
         }
+        else
+        {
+            // pass
+        }
+
         return reti;
     }
     

@@ -72,8 +72,8 @@ public class ZoneTariff extends Tariff{
         {
             this.zones.put(s, 0);
         }
-        this.ZfilePath = "resources/" + abbreavation.toLowerCase() + ".jtz";
-        this.PfilePath = "resources/" + abbreavation.toLowerCase() + ".jtp";
+        this.ZfilePath = "resources/data/" + abbreavation.toLowerCase() + ".jtz";
+        this.PfilePath = "resources/data/" + abbreavation.toLowerCase() + ".jtp";
         this.LoadZones();
         this.LoadPrices();
     }

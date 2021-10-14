@@ -59,7 +59,7 @@ public class Stations {
     private Stations()
     {
         this.stations = new ArrayList<>();
-        this.stationsFile = new File("resources/stations.csv");
+        this.stationsFile = new File("resources/data/stations.csv");
         this.LoadStations();
     }
     

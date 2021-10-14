@@ -51,7 +51,7 @@ public class Distances
     /**
      * File with saved distances between stations
      */
-    private final String filePath = "resources/distances.jtd";
+    private final String filePath = "resources/data/distances.jtd";
     
     /**
      * Creates new manager of distances between stations
