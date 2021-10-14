@@ -56,6 +56,7 @@ public class Welcome extends State
         {
             case "exit": this.controller.ChangeState("exit"); break;
             case "data": this.controller.ChangeState("data"); break;
+            case "sale": this.controller.ShowTariffsHelp(); break;
         }
     }
     

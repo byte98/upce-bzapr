@@ -17,14 +17,12 @@
  */
 package cz.upce.fei.skodaj.bzapr.semestralproject;
 
-import cz.upce.fei.skodaj.bzapr.semestralproject.data.Stations;
-import cz.upce.fei.skodaj.bzapr.semestralproject.data.Tariffs;
 import cz.upce.fei.skodaj.bzapr.semestralproject.ui.MainWindow;
 import cz.upce.fei.skodaj.bzapr.semestralproject.states.State;
 import cz.upce.fei.skodaj.bzapr.semestralproject.states.StateFactory;
+import cz.upce.fei.skodaj.bzapr.semestralproject.ui.HelpWindow;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +48,11 @@ public class Controller {
     * Main window of the program
     */
    private MainWindow mainWindow;
+   
+   /**
+    * Window with help needed when selling tickets
+    */
+   private HelpWindow helpWindow;
    
    /**
     * Actual state of program
@@ -85,6 +88,10 @@ public class Controller {
                 mainWindow.setVisible(true);
                 mainWindow.SetController(Controller.instance);
                 ChangeState("welcome");
+                
+                helpWindow = new HelpWindow();
+                helpWindow.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+                helpWindow.pack();
             }
         });
     }
@@ -311,4 +318,16 @@ public class Controller {
         this.mainWindow.ShowScreen(this.actualState.GetScreen(data));
     }
     
+    /**
+     * Shows tariffs in help window
+     */
+    public void ShowTariffsHelp()
+    {
+        if (this.helpWindow.isVisible() == false)
+        {
+            this.helpWindow.setVisible(true);
+        }
+        this.helpWindow.setLocation(this.mainWindow.getX() + this.mainWindow.getWidth() + 5, this.mainWindow.getY());
+        this.helpWindow.ShowTariffs();
+    }
 }
