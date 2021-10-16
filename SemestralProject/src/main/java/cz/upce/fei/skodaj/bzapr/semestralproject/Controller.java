@@ -149,6 +149,7 @@ public class Controller {
         this.states.add(StateFactory.CreateState(this, "tariffs-dist-prices"));
         this.states.add(StateFactory.CreateState(this, "tariffs-dist-view"));
         this.states.add(StateFactory.CreateState(this, "tariffs-dist-delete"));
+        this.states.add(StateFactory.CreateState(this, "ticket"));
     }
     
     /**
@@ -307,6 +308,8 @@ public class Controller {
     public void ReDraw()
     {
         this.mainWindow.ShowScreen(this.actualState.GetScreen());
+        this.mainWindow.ShowHelp(this.actualState.GetHelps());
+        this.mainWindow.SetCommandMode(this.actualState.GetCommandPrefix());
     }
     
     /**
@@ -316,6 +319,8 @@ public class Controller {
     public void ReDraw(Map<String, String> data)
     {
         this.mainWindow.ShowScreen(this.actualState.GetScreen(data));
+        this.mainWindow.ShowHelp(this.actualState.GetHelps());
+        this.mainWindow.SetCommandMode(this.actualState.GetCommandPrefix());
     }
     
     /**
@@ -329,5 +334,29 @@ public class Controller {
         }
         this.helpWindow.setLocation(this.mainWindow.getX() + this.mainWindow.getWidth() + 5, this.mainWindow.getY());
         this.helpWindow.ShowTariffs();
+        this.mainWindow.SetFocusOnCommandLine();
+    }
+    
+    
+    /**
+     * Shows stations in help window
+     */
+    public void ShowStationsHelp()
+    {
+        if (this.helpWindow.isVisible() == false)
+        {
+            this.helpWindow.setVisible(true);
+        }
+        this.helpWindow.setLocation(this.mainWindow.getX() + this.mainWindow.getWidth() + 5, this.mainWindow.getY());
+        this.helpWindow.ShowStations();
+        this.mainWindow.SetFocusOnCommandLine();
+    }
+    
+    /**
+     * Hides help window
+     */
+    public void HideHelp()
+    {
+        this.helpWindow.setVisible(false);
     }
 }

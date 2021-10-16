@@ -69,6 +69,7 @@ public class StateFactory
             case    "tariffs-dist-prices": reti = new TariffsDistPrices(controller);    break;
             case      "tariffs-dist-view": reti = new TariffsDistView(controller);      break;
             case    "tariffs-dist-delete": reti = new TariffsDistDelete(controller);    break;
+            case                 "ticket": reti = new Ticket(controller);               break;
         }
         return reti;
     }

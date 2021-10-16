@@ -494,4 +494,12 @@ public class MainWindow extends JFrame
         this.commandMode = commandPrefix;
         this.commandPrefix.setText(this.commandMode + "> ");
     }
+    
+    /**
+     * Sets focus on command line
+     */
+    public void SetFocusOnCommandLine()
+    {
+        this.command.requestFocus();
+    }
 }

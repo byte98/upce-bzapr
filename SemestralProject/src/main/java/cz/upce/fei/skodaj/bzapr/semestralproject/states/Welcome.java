@@ -57,8 +57,18 @@ public class Welcome extends State
             case "exit": this.controller.ChangeState("exit"); break;
             case "data": this.controller.ChangeState("data"); break;
             case "ticket":
-                this.controller.ShowTariffsHelp();
-                this.controller.ChangeState("ticket");
+                if (cz.upce.fei.skodaj.bzapr.semestralproject.data.Tariffs.GetInstance().GetAllTariffs().length < 1)
+                {
+                    this.controller.ShowError("Nenalezen zadny tarif! Rezim prodeje nelze spustit!");
+                }
+                else if (cz.upce.fei.skodaj.bzapr.semestralproject.data.Stations.GetInstance().GetAllStations().length < 1)
+                {
+                    this.controller.ShowError("Nenalezeny zadne stanice! Rezim prodeje nelze spustit!");
+                }
+                else
+                {
+                    this.controller.ChangeState("ticket");
+                }             
                 break;
         }
     }

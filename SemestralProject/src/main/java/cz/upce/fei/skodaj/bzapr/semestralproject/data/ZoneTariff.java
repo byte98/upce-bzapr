@@ -347,4 +347,14 @@ public class ZoneTariff extends Tariff{
             pFile.delete();
         }
     }
+    
+    /**
+     * Gets zone of station
+     * @param s Station which zone will be get
+     * @return Number of zone to which station belongs to
+     */
+    public int GetZone(Station s)
+    {
+        return this.zones.get(s);
+    }
 }
