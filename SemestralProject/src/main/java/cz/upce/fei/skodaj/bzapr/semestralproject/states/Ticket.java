@@ -274,7 +274,7 @@ public class Ticket extends State{
                             {
                                 ZoneTariff zt = (ZoneTariff) this.tariff;
                                 this.ticketData.put("ticket_to", to.GetName() + " (" + zt.GetZone(to) + ")");
-                                distance += " (pocet zon: " + Math.abs(zt.GetZone(this.origin) - zt.GetZone(this.destination)) + ")";
+                                distance += " (pocet zon: " + (Math.abs(zt.GetZone(this.origin) - zt.GetZone(this.destination)) + 1) + ")";
                             }
                             else this.ticketData.put("ticket_to", to.GetName());
                             this.ticketData.put("ticket_distance", distance);
@@ -346,11 +346,11 @@ public class Ticket extends State{
         this.WriteTextToPage(doc, page, this.ticketData.get("ticket_price"), PDType1Font.COURIER_BOLD, 48, 73, 280, Integer.MAX_VALUE);
         this.WriteTextToPage(doc, page, "Cena bez DPH", PDType1Font.COURIER, 12, 90, 5, Integer.MAX_VALUE);
         this.WriteTextToPage(doc, page, "Price without VAT", PDType1Font.COURIER, 12, 78, 5, Integer.MAX_VALUE);
-        this.WriteTextToPage(doc, page, "CZK " + String.valueOf((float)Integer.parseInt(this.ticketData.get("ticket_price")) - ((float)Integer.parseInt(this.ticketData.get("ticket_price")) * (float)((float)this.VAT / (float)100))), PDType1Font.COURIER, 18, 85, 140, Integer.MAX_VALUE);
+        this.WriteTextToPage(doc, page, "CZK " + String.format("%.2f", (float)Integer.parseInt(this.ticketData.get("ticket_price")) - ((float)Integer.parseInt(this.ticketData.get("ticket_price")) * (float)((float)this.VAT / (float)100))), PDType1Font.COURIER, 18, 85, 140, Integer.MAX_VALUE);
         this.WriteTextToPage(doc, page, "DPH", PDType1Font.COURIER, 12, 66, 5, Integer.MAX_VALUE);
         this.WriteTextToPage(doc, page, "VAT", PDType1Font.COURIER, 12, 54, 5, Integer.MAX_VALUE);        
         this.WriteTextToPage(doc, page, this.VAT + " %", PDType1Font.COURIER, 18, 61, 70, Integer.MAX_VALUE);
-        this.WriteTextToPage(doc, page, "CZK " + String.valueOf((float)Integer.parseInt(this.ticketData.get("ticket_price")) * (float)((float)this.VAT / 100f)), PDType1Font.COURIER, 18, 61, 140, Integer.MAX_VALUE);
+        this.WriteTextToPage(doc, page, "CZK " + String.format("%.2f", (float)Integer.parseInt(this.ticketData.get("ticket_price")) * (float)((float)this.VAT / 100f)), PDType1Font.COURIER, 18, 61, 140, Integer.MAX_VALUE);
         
         doc.addPage(page);
         try
