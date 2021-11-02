@@ -87,8 +87,7 @@ public class Stations {
                                 bits[2] += "," + bits[i];
                             }
                         }
-                        Station s = new Station(bits[1], bits[2]);
-                        s.SetIdentifier(Integer.parseInt(bits[0]));
+                        Station s = new Station(bits[1], bits[2], Integer.parseInt(bits[0]));
                         this.stations.add(s);
                     }
                     ln++;

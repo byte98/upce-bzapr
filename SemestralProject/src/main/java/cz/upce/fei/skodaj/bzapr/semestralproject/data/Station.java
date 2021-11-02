@@ -51,6 +51,19 @@ public class Station {
     }
     
     /**
+     * Creates new station
+     * @param abbrevation Abbrevation for the station
+     * @param name Name of the station
+     * @param identifier Identifier of station in system
+     */
+    public Station (String abbrevation, String name, int identifier)
+    {
+        this.abbrevation = abbrevation;
+        this.name = name;
+        this.identifier = identifier;
+    }
+    
+    /**
      * Gets name of the station
      * @return Name of the station
      */
