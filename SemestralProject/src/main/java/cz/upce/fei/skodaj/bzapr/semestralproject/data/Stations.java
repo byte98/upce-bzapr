@@ -370,12 +370,16 @@ public class Stations {
      */
     public String GenerateTableRows()
     {
-        String reti = "";
+        StringBuilder sb = new StringBuilder();
         for (Station s : this.GetAllStations())
         {
-            reti += "<tr><td style=\"color: green;\">" + s.GetAbbrevation().toUpperCase() + "</td><td>" + s.GetName() + "</td></tr>";
+            sb.append("<tr><td style='color: green;'>");
+            sb.append(s.GetAbbrevation().toUpperCase());
+            sb.append("</td><td>");
+            sb.append(s.GetName());
+            sb.append("</td></tr>");
         }
-        return reti;
+        return sb.toString();
     }
     
     /**

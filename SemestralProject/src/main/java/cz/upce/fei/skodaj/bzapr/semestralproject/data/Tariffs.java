@@ -96,16 +96,18 @@ public class Tariffs {
      */
     public String GenerateTariffsTableRows()
     {
-        String reti = new String();
+        StringBuffer sb = new StringBuffer();
         for (Tariff t: this.GetAllTariffs())
         {
-            reti += "<tr><td style='color: blue;'>" + t.GetAbbr() + "</td><td>" + t.GetName() + "</td><td  style='color: green;'>";
-            if (t.GetType() == TariffType.DISTANCE) reti += "VZDALENOSTNI";
-            else if (t.GetType() == TariffType.ZONE) reti += "ZONOVY";
-            reti += "</td></tr>";
-                
+            sb.append("<tr><td style='color: blue;'>");
+            sb.append(t.GetAbbr());
+            sb.append("</td><td>");
+            sb.append(t.GetName());
+            sb.append("</td><td style='color: green;'>");
+            sb.append(t.GetType() == TariffType.DISTANCE ? "VZDALENOSTNI" : (t.GetType() == TariffType.ZONE ? "ZONOVY" : "N/A"));
+            sb.append("</td></tr>");                
         }
-        return reti;
+        return sb.toString();
     }
     
     /**
