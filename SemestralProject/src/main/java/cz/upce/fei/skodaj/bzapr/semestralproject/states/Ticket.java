@@ -362,6 +362,7 @@ public class Ticket extends State{
         {
             Logger.getLogger(Ticket.class.getName()).log(Level.SEVERE, null, ex);
         }
+        System.out.printf("Ticket (id: %s, file: %s) has been created\n", this.ticketData.get("ticket_id"), path);
         
     }
     

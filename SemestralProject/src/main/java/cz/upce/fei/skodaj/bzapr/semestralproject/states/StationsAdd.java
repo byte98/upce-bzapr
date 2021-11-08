@@ -68,6 +68,7 @@ public class StationsAdd extends State
         {
             Station st = new Station(this.stationAbbr, this.stationName);
             cz.upce.fei.skodaj.bzapr.semestralproject.data.Stations.GetInstance().AddStation(st);
+            System.out.printf("New station (name: %s, abbreavation: %s) has been added\n", this.stationName, this.stationAbbr);
             this.controller.ShowSucess("Stanice '" + this.stationName + " (" + this.stationAbbr + ")' byla uspesne pridana!");
             this.controller.ChangeState("stations");
         }

@@ -89,7 +89,8 @@ public class TariffsDist extends State {
             case "yes": 
                 Map<String, String> data = new HashMap<>();
                 data.put("tariff_name", this.tariffName);
-                data.put("tariff_abbr", this.tariffAbbr);
+                data.put("tariff_abbr", this.tariffAbbr);                
+                System.out.format("Tariff (type: %s, name: %s, abbreavation: %s) has been created\n", "DISTANCE", this.tariffName, this.tariffAbbr);
                 cz.upce.fei.skodaj.bzapr.semestralproject.data.Tariffs.GetInstance().AddTariff(new DistanceTariff(this.tariffName, this.tariffAbbr));
                 this.controller.ChangeState("tariffs-dist-prices", data);
                 break;

@@ -89,7 +89,8 @@ public class TariffsZone extends State {
                 Map<String, String> data = new HashMap<>();
                 data.put("tariff_name", this.tariffName);
                 data.put("tariff_abbr", this.tariffAbbr);
-                this.controller.ChangeState("tariffs-zone-zones", data);
+                System.out.format("Tariff (type: %s, name: %s, abbreavation: %s) has been created\n", "ZONE", this.tariffName, this.tariffAbbr);
+                this.controller.ChangeState("tariffs-zone-zones", data);                
                 break;
         }
     }
